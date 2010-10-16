@@ -77,13 +77,13 @@ class DATABASE_CONFIG {
 		'driver' => 'mysql',
 		'persistent' => false,
 		'host' => 'localhost',
-		'login' => 'user',
-		'password' => 'password',
-		'database' => 'database_name',
+		'login' => 'milos',
+		'password' => '211198',
+		'database' => 'inkoplan',
 		'prefix' => '',
 	);
 
-	var $test = array(
+	/*var $test = array(
 		'driver' => 'mysql',
 		'persistent' => false,
 		'host' => 'localhost',
@@ -91,5 +91,5 @@ class DATABASE_CONFIG {
 		'password' => 'password',
 		'database' => 'test_database_name',
 		'prefix' => '',
-	);
+	);*/
 }
