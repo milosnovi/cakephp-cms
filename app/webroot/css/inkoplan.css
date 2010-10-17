@@ -1,0 +1,389 @@
+@CHARSET "ISO-8859-1";
+
+body {
+	color:#363636;
+	font-family:Arial,Helvetica,sans-serif;
+	font-size:12px;
+}
+
+body, fieldset, img, div, span{
+	border: medium none;	
+}
+
+ol, ul {
+	list-style:none outside none;
+}
+
+div.text {
+	width: 670px;
+}
+
+div .text ul {
+	list-style: disc outside none;
+}
+
+body.bodyLayout {
+	background:url("../img/body-background.png") repeat-x fixed 0 0 #070708;
+	margin:0 auto;
+	padding:30px 0;
+	width:960px;
+}
+
+label span.required {
+	color: #E51309;
+	padding:0 3px;
+}
+
+.footer {
+	background:none repeat scroll 0 0 #F0F0F0;
+	border:1px solid #FFFFFF;
+	color:#797979;
+	font-size:10px;
+	line-height:1.5;
+	clear:both;
+	float:left;
+	margin-bottom:60px;
+	margin-top:6px;
+	padding:20px 14px;
+	position:relative;
+	width:930px;
+}
+
+#content {
+	background:none repeat scroll 0 0 #F0F0F0;
+	border:1px solid #FFFFFF;
+	float:left;
+	margin-top:6px;
+	padding:14px;
+	width:930px;
+}
+
+#header {
+	background:url("../img/header-background.png") repeat-x scroll 0 0 transparent;
+	float:left;
+	height:95px;
+	width:960px;
+}
+
+#header #top_left {
+	float:left;
+	height:75px;
+	width:70px;
+}
+
+#header #top {
+	float:left;
+	height:75px;
+	width:580px;
+}
+
+#header #top_right {
+	float:left;
+	width:300px;
+}
+
+#top .menu {
+	float:left;
+	height:75px;
+	width:520px;
+}
+
+#top .menu ul {
+	list-style:none outside none;
+	margin: 0px;
+}
+
+#top .menu li {
+	float:left;
+	width: 110px;
+}
+
+#top .menu a {
+	display:block;
+	float:none !important;
+	height:85px;
+	text-align:center;
+	text-decoration:none;
+}
+
+#top .menu a span {
+	background:url("../img/icon-set.png") no-repeat scroll center -3px transparent;
+	color:#363636;
+	cursor:pointer;
+	display:block;
+	float:none !important;
+	font-size:11px;
+	font-weight:bold;
+	height:35px;
+	padding:60px 17px 0;
+	text-transform:uppercase;
+}
+
+#top .menu .about_us a span {
+	background-position: center -447px;
+}
+
+#top .menu .employee a span {
+	background-position: center -323px;
+}
+
+#top .menu .contact_us a span {
+	background-position: center -194px;
+}
+
+#top .menu a:hover,
+#top .menu .active a {
+	background:url("../img/menutab-active.png") repeat-x scroll -3px transparent;
+}
+
+#top .menu a:hover span,
+#top .menu .active a span {
+	background:url("../img/icon-set.png") no-repeat scroll center -3px top transparent;
+	color:#1F6FA6;
+}
+
+#top .menu .about_us a:hover span, 
+#top .menu .about_us.active a span {
+	background-position: center -385px;
+}
+
+#top .menu .employee a:hover span,
+#top .menu .employee.active a span {
+	background-position: center -259px;
+}
+
+#top .menu .contact_us a:hover span,
+#top .menu .contact_us.active a span {
+	background-position: center -130px;
+}
+
+#top_right .searchbox {
+	padding-top: 40px;
+	padding-left:60px;
+}
+
+#top_right .searchbox h2 {
+	display:none;
+}
+
+
+#top_right input.text {
+	border:1px solid #DFDDDD;
+	float:left;
+	height:14px;
+	padding:5px 5px;
+	width:150px;
+}
+
+#top_right input.button, 
+#top_right input.button:active,
+#top_right input.button:focus {
+	background-color: #ffad46;
+	border:1px solid #E4E4E4;
+	color:#FFFFFF;
+	float:left;
+	font-family:Arial,Helvetica,sans-serif;
+	font-size:10px;
+	font-weight:bold;
+	height:26px;
+	margin-left:5px;
+	outline:medium none;
+	padding-bottom:3px;
+	text-transform:uppercase;
+	width:70px;
+}
+
+input.button, .submit input, #fleximail label {
+	cursor:pointer;
+}
+
+
+#main .top-blocks {
+	clear: both;
+	float: left;
+	margin: 0 0 10px -12px !important;
+	width: 955px;
+}
+
+#main .top-blocks .block {
+	background:url("okvir.jpg") no-repeat scroll left top transparent;
+	float:left;
+	height:275px;
+	margin-left:10px !important;
+	overflow:hidden;
+	width:460px;
+}
+
+#main .top-blocks .block {
+	background:url("okvir.jpg") no-repeat scroll left top transparent;
+	float:left;
+	height:275px;
+	margin-left:10px !important;
+	overflow:hidden;
+	width:440px;
+	padding: 10px;
+}
+
+
+/*START CONATCT PAGE STYLE*/
+.contact form {
+	float:left;
+	position:relative;
+}
+
+#main form fieldset {
+	position:relative;
+	width:470px;
+}
+
+#main form ul {
+	list-style:none outside none;
+	margin-left: 0;
+	padding-left: 0px;
+}
+
+#main form ul li {
+	padding:3px 0;
+	width:470px;
+}
+
+
+#main form label {
+	color:#363636;
+	cursor:pointer;
+	position: relative;
+	float: left;
+	font-size:11px;
+	height:32px;
+	line-height:32px;
+	text-transform:uppercase;
+	width:112px;
+}
+
+#main form input.text,
+#main form select {
+	border:1px solid #E4E4E4;
+	color:#4D4D4D;
+	font-family:Arial,Helvetica,sans-serif;
+	font-size:13px;
+	height:20px;
+	padding:5px 10px;
+	width:333px;
+}
+
+#main form textarea {
+	border:1px solid #E4E4E4;
+	color:#4D4D4D;
+	font-family:Arial,Helvetica,sans-serif;
+	font-size:13px;
+	height:152px;
+	padding:10px;
+	width:445px;
+}
+
+:focus, :active {
+	outline:0 none;	
+}
+
+.contact form label.checkbox {
+	clear:none;
+	float:left;
+	position: relative;
+	margin-left:10px !important;
+	margin-top:5px;
+	width:250px;
+}
+
+.contact form .submit {
+	bottom:7px;
+	position:absolute;
+	right:15px;
+}
+
+.contact form .submit input {
+	background-color: #4d82b8;
+	border:medium none;
+	color:#FFFFFF;
+	float:left;
+	font-family:Arial,Helvetica,sans-serif;
+	font-weight:bold;
+	height:24px;
+	text-transform:uppercase;
+}
+/*END CONATCT PAGE STYLE*/
+	
+	
+/* START LEFT MENU*/
+
+#left .menu {
+	float:left;
+	width:225px;
+}
+
+#left .menu ul {
+	background:url("../img/sidemenu-line.png") no-repeat scroll left top transparent;
+	padding-left: 0px;
+}
+
+#left .menu li.active a {
+	font-weight: bold;
+}
+
+#left .menu li a:hover,
+#left .menu li.active a {
+	color:#EF4023;
+}
+
+#left .menu a {
+	background:url("../img/sidemenu-line.png") no-repeat scroll left bottom transparent;
+	color:#363636;
+	display:block;
+	font-size:10px;
+	font-weight:bold;
+	height:29px;
+	line-height:28px;
+	padding-left:7px;
+	text-decoration:none;
+	text-transform:uppercase;
+}
+
+#left .menu ul ul {
+	background:none repeat scroll 0 0 transparent;
+	padding-left: 5px;
+}
+
+#left .menu li li a {
+	font-weight:normal;
+	padding-left:21px;
+}
+#left .content {
+		width: 200px;
+}
+/*END LEFT MENU*/
+
+/* Main content*/
+body #main {
+	float: left;
+	width: 705px;
+}
+
+/* End main content*/
+.cake-sql-log {
+	background:none repeat scroll 0 0 #F0F0F0;
+}
+
+.cake-debug {
+	background:none repeat scroll 0 0 #F0F0F0;
+}
+
+
+
+
+
+
+
+
+
+
+
+

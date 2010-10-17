@@ -3,13 +3,14 @@
 	<head>
 		<title><?= $title_for_layout ?></title>
 		<?= $this->Html->css('default', null, array('media' => 'screen')) ?>
+		<?= $this->Html->css('inkoplan', null, array('media' => 'screen')) ?>
 		<?= $this->Html->css('jquery-ui-1.8.1.custom') ?>
 		<?= $this->Html->script('jquery-1.4.2') ?>
 		<?= $this->Html->script('jquery-ui-1.8.1.custom.min') ?>
 		<?= $this->Html->script('jquery.form') ?>
 		<?= $scripts_for_layout ?>
 	</head>
- 	<body>
+ 	<body class="bodyLayout">
 		<?= $this->element('header') ?>
 		<div id="content">
 			<?// = $this->element('session_messages') ?>
