@@ -1,0 +1,329 @@
+Ext.namespace('CP');
+
+CP.Pages = function() {
+	return {
+		getNavigationItems: function() {
+			return new Ext.tree.TreePanel({
+	    		id: 'Navigation.MenuTree',
+				border: false,
+		        autoScroll: true,
+		        animate: true,
+		        enableDD: true,
+		        containerScroll: true,
+		        autoHeight: true,
+		        draggedElement: false,
+		        draggedNode: false,
+		        targetNode: false,
+		        loader: new Ext.tree.TreeLoader({
+		        	dataUrl: '/inkoplan/admin/menuitems/get_nodes'
+		    	}),
+		    	dropConfig:{
+					allowContainerDrop:true
+				},
+		        rootVisible: false,
+		        /*selModel: new Ext.tree.DefaultSelectionModel({
+					listeners: {
+						beforeselect: function (sm, newSelectionNode, oldSelectionModel) {
+							return !newSelectionNode.parentNode.isRoot;
+						}
+					}
+				}),*/
+		        root: {
+		            nodeType: 'async',
+		            text: 'Root',
+		            allowDrag: false,
+					allowDrop: false,
+		            id: 'src'
+		        },
+		        listeners: {
+		        	startdrag: function(tree, node, event) {//-1
+		        	console.log('startDrag');
+						tree.draggedElement = Ext.get(tree.dragZone.getDragEl());
+					},
+		        	nodedragover: function(dragOverEvent) {//0
+						var dropNode = dragOverEvent.dropNode.attributes;
+		        		var targetNode = dragOverEvent.target.attributes;
+		        		
+		        		var reorderInsideOrphan = dropNode.orhpan_page && targetNode.orhpan_page; 
+		        		
+						console.log('1');
+//		        		var dropNodeContentType = dragOverEvent.target.attributes.content_type;
+//		        		var enableDrop = 'ROOT' != dropNodeContentType;
+						var moveToParentNode = targetNode.id == dragOverEvent.dropNode.parentNode.attributes.id;
+						return !reorderInsideOrphan || moveToParentNode;
+		        	},
+		        	beforenodedrop: function(dropEvent) {//1
+		        		return true;
+		        	},
+		        	nodedrop: function (dropEvent) {//2
+		        		console.log('dropEvent');
+		        		console.log(dropEvent);
+		        		
+		        		var dropNode = dropEvent.dropNode;
+		        		var targetNode = dropEvent.target;
+		        		
+		        		dropEvent.tree.draggedNode = dropNode;
+		        		dropEvent.tree.targetNode = targetNode;
+		        		
+						Ext.Ajax.request({
+							url: '/inkoplan/admin/menuitems/reorder_nodes',
+							params: {
+								'dropMenuitemId': 		Ext.isEmpty(dropNode.attributes.orhpan_page) ? dropNode.attributes.id : null,
+								'dropPageId':  			dropNode.attributes.content_id,
+								'dropMenuType': 		((dropNode.attributes.menu_type == '<?=Menuitem::TypeMain?>') || (dropNode.attributes.menu_type == '<?=Menuitem::TypeSide?>')) ? dropNode.attributes.menu_type : null,
+								'dropParentId': 		!Ext.isEmpty(dropNode.attributes.parent_id) ? dropNode.attributes.parent_id : null,
+								
+								'targetMenuitemId':  	Ext.isEmpty(targetNode.attributes.orhpan_page) ? targetNode.attributes.id : null,
+								'targetPageId':  		targetNode.attributes.content_id,
+								'targetMenuType': 		((targetNode.attributes.menu_type == '<?=Menuitem::TypeMain?>') || (targetNode.attributes.menu_type == '<?=Menuitem::TypeSide?>')) ? targetNode.attributes.menu_type : null,
+								'targetParentId': 		!Ext.isEmpty(targetNode.attributes.parent_id) ? targetNode.attributes.parent_id : null
+								
+							},
+							msgBoxTitle: "<?__('Opening page')?>",
+							success: function(response, options) {
+							}
+						});
+		        	},
+/*		        	dragdrop : function(tree, node, dd, e ) {//3
+		        		console.log('dragDrop');
+		        		if ('undefined' != typeof(tree.selectedNode)) {
+			        		Ext.getCmp('Navigation.MenuTree').getSelectionModel().clearSelections();
+			        		Ext.getCmp('Navigation.MenuTree').getSelectionModel().select(tree.selectedNode);
+		        		}
+		        	},
+*/
+		        	enddrag : function(tree, node, e ) {//4
+		        		tree.draggedElement = false;
+		        	},
+		        	click: function(node) {
+		        		Ext.getCmp('toolbar.buttondeleteMenuitem').enable();
+		        		if (!node.attributes.rootMenu) {
+			        		if ('CUSTOM' == node.attributes.content_type) {
+		        				Ext.MessageBox.show({
+		        					title: 'Warning message',
+		        					msg: 'This page can\'t be edited. Please contact administrator for further information!',
+		        					buttons: Ext.MessageBox.OK,
+		        					icon: Ext.MessageBox.WARNING
+		        				});
+			        		} else {
+			        			console.log(node.attributes);
+			        			CP.Pages.openCenterPanel(node.attributes.content_id);
+			        		}
+		        		}
+		        	}
+		        }
+		    });
+		},
+		createNewPageForm: function() {
+			var windowCreateNewPage = new Ext.Window({
+				id: 'Pages.Window.CreateNewPage',
+				title: "<?__('Add page')?>",
+				width: 400,
+				autoHeight: true,
+				modal: true,
+				plain: true,
+				resizable: false,
+				buttonAlign: 'center',
+				constrainHeader: true,
+				items: [
+				    new Ext.FormPanel({
+				    	id: 'Menuitems.addNewpage',
+						labelWidth: 100,
+						baseCls: 'x-plain',
+						bodyStyle: 'padding: 5px',
+						items: [{
+			        			id: 'Pages.Pagename',
+			        			xtype: 'field',
+			        			fieldLabel: 'Page name',
+			        			anchor: '95%',
+				        		name: '<?=MF2D(Page::T_Title)?>'
+				    		},{
+					        	xtype: 'combo',
+								name: '<?=MF2D(Menuitem::A_T_MainMenu)?>',
+								hiddenName: '<?=MF2D(Menuitem::A_T_MainMenu)?>',
+								fieldLabel: "<?__('Menu')?>",
+								anchor: '95%',
+								mode: 'local',
+								store: new Ext.data.SimpleStore({
+									fields: ['isMain', 'MenuName'],
+									data: [
+								       [1, "<?__('Main menu')?>"],
+								       [0, "<?__('Side menu')?>"]
+									]
+								}),
+								displayField: 'MenuName',
+								valueField: 'isMain',
+								editable: false,
+								triggerAction: 'all'
+					       },
+			        	   new Ext.form.Checkbox({
+								boxLabel: 'Publish page',
+								hideLabel: true,
+								name: '<?=MF2D(Menuitem::T_Visible)?>',
+								inputValue: 1
+							})
+				       ]
+				    })
+			    ],
+		        buttons: [{
+					id: 'Pages.formPage.AddPageForm.Save',
+					text: "<?__('Save')?>",
+					handler: function () {
+		        		Ext.getCmp('Menuitems.addNewpage').getForm().submit({
+							url: '/inkoplan/admin/pages/create_page/',
+							msgBoxTitle: "<?__('Creating page')?>",
+							success: function(form, action) {
+				    			if (action.result.success) {
+				    				windowCreateNewPage.close();
+				    				Ext.getCmp('Navigation.MenuTree').getRootNode().reload();
+				    				CP.Pages.showEditPageForm(action.result.<?=PAGE?>);
+				    			}
+							}
+						});
+	        		}
+				},{	
+					text: 'Close',
+					handler: function() {
+						windowCreateNewPage.close();
+					}	
+				}]
+			});
+			return windowCreateNewPage;
+		},
+		openCenterPanel: function(pageId) {
+			Ext.Ajax.request({
+				url: '/inkoplan/admin/pages/form/' + pageId,
+				msgBoxTitle: "<?__('Opening page')?>",
+				success: function(response, options) {
+	    			CP.Pages.showEditPageForm(Ext.decode(response.responseText));
+				}
+			});
+		},
+		showEditPageForm: function(pageData) {
+//			console.log(Ext.getCmp('Pages.MainCenterPanel'));
+			if (Ext.isEmpty(Ext.getCmp('Pages.MainCenterPanel'))) { 
+		        var pagesContent = new Ext.Panel({
+		        	id: 'Pages.MainCenterPanel',
+		        	border: false,
+					autoScroll: true,
+		        	autoHeight: true,
+		        	title: pageData.<?=Page::T_Title?>,
+		        	tbar: [{
+	        			xtype: 'tbbutton',
+	    	            text: "<?__('Delete page')?>",
+	    	            iconCls: 'pages-delete',
+	    	            handler: function() {
+		        			var selectionNode = Ext.getCmp('Navigation.MenuTree').getSelectionModel().getSelectedNode().attributes;
+		        			Ext.Ajax.request({
+	    	    				url: '/inkoplan/admin/pages/delete_page/' + pageData.<?=Page::Id?> + '/' + selectionNode.id,
+	    	    				msgBoxTitle: "Deleting page",
+	    	    				success: function(response, options) {
+//	    	    					console.log(response);
+//	    	    					console.log(Ext.decode(response.responseText));
+	    	    					
+	    	    					Ext.getCmp('Navigation.MenuTree').getRootNode().reload();
+	    	    					
+	//    	    	    			CP.Pages.showEditPageForm(Ext.decode(response.responseText));
+	    	    				}
+	    	    			});
+	        			}
+	    	        },{
+	    	        	xtype: 'tbbutton',
+	    	            text: "<?__('Reload')?>",
+	    	            iconCls: 'refresh-button-icon',
+	    	            handler: function() {
+	    	        		pageId = Ext.get('Pages.formPage.panelContent.pageId').getValue();
+	    	            	Ext.Ajax.request({
+	    	    				url: '/inkoplan/admin/pages/form/' + pageId,
+	    	    				msgBoxTitle: "Reloading page",
+	    	    				success: function(response, options) {
+	    	    	    			CP.Pages.showEditPageForm(Ext.decode(response.responseText));
+	    	    				}
+	    	    			});
+	    	            }
+	    	        }],
+		        	items:[
+	    	       		new Ext.form.FormPanel({
+							id: 'Pages.formPage',
+							border: false,
+							labelAlign: 'top',
+							labelWidth: 100,
+							width: 750,
+							autoHeight: true,
+							style: 'padding: 10px',
+							items:[{
+									id: 'Pages.formPage.panelContent.pageId',
+									name: "<?=MF2D(Page::Id)?>",
+									xtype: 'hidden',
+									value: pageData.<?=Page::Id?>
+								},
+								new Ext.form.FieldSet({
+									border: false,
+									width: 735,
+									items:[
+						        	   new Ext.form.TextField({
+						        		   id: 'Pages.title',
+						        		   name: '<?=MF2D(Page::T_Title)?>',
+						        		   fieldLabel: 'Page name',
+						        		   anchor: '100%',
+						        		   value: pageData.<?=Page::T_Title?>
+						        	   }),
+					        	       new Ext.form.TextArea({
+							        		id: 'inputTextarea',
+							        		name: '<?=MF2D(Page::T_Content)?>',
+							        		width: 720,
+							        		height: 400,
+							        		value: pageData.<?=Page::T_Content?>,
+							        		listeners: {
+							        			afterrender: function(content) {
+							                		tinyMCE.init({
+							                			// General options
+							                			mode : "textareas",
+							                			theme : "advanced",
+							
+							                			// Theme options
+							                			theme_advanced_toolbar_location : "top",
+							                			theme_advanced_toolbar_align : "left",
+							                			theme_advanced_resizing : true
+							                		});
+							        			}
+							        		}
+					        	       
+					        	       })]
+									})
+								],
+								buttons: [{
+									id: 'Pages.formPage.panelContent.buttonSaveAndPublish',
+									text: 'Save',
+									handler: function () {
+										Ext.getCmp('inputTextarea').setValue(tinyMCE.get('inputTextarea').getContent());
+										Ext.getCmp('Pages.formPage').getForm().submit({
+											url: '/inkoplan/admin/pages/form',
+											msgBoxTitle: "<?__('Saving page')?>",
+											success: function(form, action) {
+												
+											}
+										});
+									}
+								},{
+									text: 'Close',
+									handler: function() {
+									
+									}
+								}]
+							})
+				     ]
+		        });
+		        CP.Layout.global.fireEvent('showInCenter', pagesContent);
+			} else {
+				var textArea = tinyMCE.get('inputTextarea');
+				textArea.setContent(pageData.<?=Page::T_Content?>);
+				
+				Ext.getCmp('Pages.title').setValue(pageData.<?=Page::T_Title?>);
+				Ext.getCmp('Pages.formPage.panelContent.pageId').setValue(pageData.<?=Page::Id?>);
+				Ext.getCmp('Pages.MainCenterPanel').setTitle(pageData.<?=Page::T_Title?>);
+			}
+	        
+		}
+	}
+}();

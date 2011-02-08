@@ -6,8 +6,12 @@ body {
 	font-size:12px;
 }
 
+h1,h2,h3,h4,h5,h6 {
+	margin: 10px 0 !important;	
+}
+
 body, fieldset, img, div, span{
-	border: medium none;	
+	border: medium none;
 }
 
 ol, ul {
@@ -65,6 +69,7 @@ label span.required {
 	width:960px;
 }
 
+
 #header #top_left {
 	float:left;
 	height:75px;
@@ -91,6 +96,7 @@ label span.required {
 #top .menu ul {
 	list-style:none outside none;
 	margin: 0px;
+	padding:0 30px;
 }
 
 #top .menu li {
@@ -119,6 +125,10 @@ label span.required {
 	text-transform:uppercase;
 }
 
+#top .menu .home_page a span {
+	background-position: center -66px;
+}
+
 #top .menu .about_us a span {
 	background-position: center -447px;
 }
@@ -133,13 +143,18 @@ label span.required {
 
 #top .menu a:hover,
 #top .menu .active a {
-	background:url("../img/menutab-active.png") repeat-x scroll -3px transparent;
+	background:url("../img/menutab-active.png") repeat-x scroll transparent;
 }
 
-#top .menu a:hover span,
+/*#top .menu a:hover span,
 #top .menu .active a span {
 	background:url("../img/icon-set.png") no-repeat scroll center -3px top transparent;
 	color:#1F6FA6;
+}*/
+
+#top .menu .home_page a:hover span, 
+#top .menu .home_page.active a span {
+	background-position: center -2px;
 }
 
 #top .menu .about_us a:hover span, 
@@ -205,50 +220,55 @@ input.button, .submit input, #fleximail label {
 	width: 955px;
 }
 
-#main .top-blocks .block {
+/* #main .top-blocks .block {
 	background:url("okvir.jpg") no-repeat scroll left top transparent;
 	float:left;
 	height:275px;
 	margin-left:10px !important;
 	overflow:hidden;
 	width:460px;
-}
+}*/
 
 #main .top-blocks .block {
 	background:url("okvir.jpg") no-repeat scroll left top transparent;
 	float:left;
-	height:275px;
+	height:200px;
 	margin-left:10px !important;
 	overflow:hidden;
 	width:440px;
 	padding: 10px;
 }
 
+#main .top-blocks .block p {
+	margin: 12px 0;
+}
 
 /*START CONATCT PAGE STYLE*/
 .contact form {
 	float:left;
 	position:relative;
+	margin-right:15px;
 }
 
-#main form fieldset {
+.contact_content form fieldset {
 	position:relative;
 	width:470px;
+	padding:4px 7px 9px;
 }
 
-#main form ul {
+.contact_content form ul {
 	list-style:none outside none;
-	margin-left: 0;
+	margin: 12px 0;
 	padding-left: 0px;
 }
 
-#main form ul li {
+.contact_content form ul li {
 	padding:3px 0;
 	width:470px;
 }
 
 
-#main form label {
+.contact_content form label {
 	color:#363636;
 	cursor:pointer;
 	position: relative;
@@ -260,8 +280,8 @@ input.button, .submit input, #fleximail label {
 	width:112px;
 }
 
-#main form input.text,
-#main form select {
+.contact_content form input.text,
+.contact_content form select {
 	border:1px solid #E4E4E4;
 	color:#4D4D4D;
 	font-family:Arial,Helvetica,sans-serif;
@@ -271,7 +291,7 @@ input.button, .submit input, #fleximail label {
 	width:333px;
 }
 
-#main form textarea {
+.contact_content form textarea {
 	border:1px solid #E4E4E4;
 	color:#4D4D4D;
 	font-family:Arial,Helvetica,sans-serif;
@@ -300,6 +320,14 @@ input.button, .submit input, #fleximail label {
 	right:15px;
 }
 
+
+.contact h1 {
+	margin: 8px 0;
+}
+
+.contact p {
+	margin: 12px 0;
+}
 .contact form .submit input {
 	background-color: #4d82b8;
 	border:medium none;
@@ -325,20 +353,11 @@ input.button, .submit input, #fleximail label {
 	padding-left: 0px;
 }
 
-#left .menu li.active a {
-	font-weight: bold;
-}
-
-#left .menu li a:hover,
-#left .menu li.active a {
-	color:#EF4023;
-}
-
 #left .menu a {
 	background:url("../img/sidemenu-line.png") no-repeat scroll left bottom transparent;
 	color:#363636;
 	display:block;
-	font-size:10px;
+	font-size:11px;
 	font-weight:bold;
 	height:29px;
 	line-height:28px;
@@ -349,15 +368,32 @@ input.button, .submit input, #fleximail label {
 
 #left .menu ul ul {
 	background:none repeat scroll 0 0 transparent;
-	padding-left: 5px;
 }
 
 #left .menu li li a {
 	font-weight:normal;
 	padding-left:21px;
 }
+#left .menu li a:hover,
+#left .menu li.active a {
+	color:#EF4023;
+}
+#left .menu li.active a {
+	font-weight:bold;
+}
+#left .menu li.active li a {
+	color:#363636;
+	font-weight:normal;
+}
+#left .menu li.active li a:hover,
+#left .menu li.active li.active a {
+	color:#EF4023;
+}
+#left .menu li.active li.active a {
+	font-weight:bold;
+}
 #left .content {
-		width: 200px;
+	width: 200px;
 }
 /*END LEFT MENU*/
 
@@ -365,6 +401,13 @@ input.button, .submit input, #fleximail label {
 body #main {
 	float: left;
 	width: 705px;
+}
+
+
+.contact_content {
+	width: 940px;
+	position: relative;
+	float: left;
 }
 
 /* End main content*/
@@ -376,7 +419,9 @@ body #main {
 	background:none repeat scroll 0 0 #F0F0F0;
 }
 
-
+pre p {
+	background:none repeat scroll 0 0 #F0F0F0;
+}
 
 
 

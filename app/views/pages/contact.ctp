@@ -1,6 +1,6 @@
 <div class="contact">
 <h1>Contact us</h1>
-<div class="position_main" id="main">
+<div class="contact_content" >
 	<p>
 	Fill out the form below to send us a message. Fields marked with <span style="color: red">*</span> are required.<br/>
 	One of our staff will contact you.
@@ -44,4 +44,5 @@
 		<div class="webfront_form_confirm" id="userContactHashCheck"></div>
 		-->
 	</form>
+	<iframe width="415" height="350" frameborder="0" scrolling="no" marginheight="0" marginwidth="0" src="http://maps.google.rs/maps/ms?hl=sr&amp;gl=rs&amp;ie=UTF8&amp;oe=UTF8&amp;msa=0&amp;msid=117626630494957520572.00049300b85048d5c1eb7&amp;ll=43.319531,21.906824&amp;spn=0,0&amp;iwloc=00049300b8536aac11806&amp;output=embed"></iframe>
 </div></div>

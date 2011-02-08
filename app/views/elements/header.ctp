@@ -1,23 +1,23 @@
 <div id="header">
 	<div id="top_left" class="position_top_left">
 		<div class="logo">
-			<h1 style ="margin: 0px">
-				<a href="http://localhost/inkoplan">
-				<img style="height: 80px;border: none;padding:10px 0 0 10px;" src="http://localhost/inkoplan/img/logo.png"></a>
-			</h1>
+			<a href="http://localhost/inkoplan">
+			<img style="height: 80px;border: none;padding:10px 0 0 10px;" src="http://localhost/inkoplan/img/logo.png"></a>
 		</div>
 	</div>
 	<div id="top" class="position_top">
 		<div id="menu" class="menu">
 			<div class="content">
-				<ul>
-					<li class="home_page"><a title="Home page" href="/inkoplan"><span>Home page</span></a></li>
-					<li class="about_us active"><a title="About us" href="/inkoplan/pages/view/1"><span>About us</span></a></li>
-					<li class="employee"><a title="Employees" href=""><span>Employees</span></a></li>
-					<li class="contact_us"><a title="Contact us" href="/inkoplan/contact"><span>Contact us </span></a></li>
-				</ul>
+			<ul>	
+				<?php foreach ($menuitemsData as $menuitem) : ?>
+					<?php $active_main_menuitem = !empty($active_main_menuitem) ? $active_main_menuitem : false?>
+					<? $activeClass = $menuitem['Menuitem']['id'] == $active_main_menuitem; ?>
+					<li class="<?=$menuitem['Menuitem']['class'] . ($activeClass ? ' active' : '')?>">
+						<a title="<?=$menuitem['Menuitem']['title']?>" href="/inkoplan/<?=$menuitem['Menuitem']['url']?>"><span><?=$menuitem['Menuitem']['title']?></span></a>
+					</li>
+				<?php endforeach; ?>
+			</ul>				
 			</div>
-			<div class="bottom"></div>
 		</div>	
 	</div>
 	<div id="top_right" class="position_top_right">

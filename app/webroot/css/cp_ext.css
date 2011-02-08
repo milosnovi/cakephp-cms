@@ -1,0 +1,17 @@
+@CHARSET "ISO-8859-1";
+
+.menu-page-node-icon {
+	background-image: url(../img/admin/menu-page-node-icon.png) !important
+}
+
+.refresh-button-icon {
+	background-image: url("../img/admin/arrow_refresh.png") !important;
+}
+
+.pages-delete {
+	background-image:url("../img/admin/page_delete.png") !important;
+}
+
+.pages-add {
+	background-image:url("../img/admin/page_add.png") !important;
+}

@@ -1,0 +1,9 @@
+Ext.namespace('CP');
+
+CP.Siteadmins = function() {
+	return {
+		openCenterPanel: function() {
+			console.log('sasdas');
+		}
+	}
+}();

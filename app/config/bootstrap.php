@@ -48,3 +48,6 @@
  * Inflector::rules('plural', array('rules' => array(), 'irregular' => array(), 'uninflected' => array()));
  *
  */
+
+require_once (CONFIGS . 'config.php');
+require_once(CONFIGS . 'common_functions.php');

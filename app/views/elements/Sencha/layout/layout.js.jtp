@@ -1,0 +1,141 @@
+Ext.namespace('CP');
+
+CP.Layout = function() {
+	return {
+		init: function() {
+			CP.loadOverrides();
+	        CP.Layout.global = new Ext.Viewport({
+	            layout:'border',
+	            items:[
+                   	new Ext.Panel({
+			        	id: 'Layout.WestPanel',
+			        	border: true,
+			            region:'west',
+			            margins: '5 0 5 5',
+			            split: true,
+			            width: 210,
+			            baseCls: 'x-plain',
+			            layout:'accordion',
+			            layoutConfig: {animate: true},
+			            items: [
+		                    new Ext.form.FormPanel({
+								title: 'Pages',
+								collapsible: true,
+								autoScroll: true,
+								width: 200,
+								module: 'Page',
+								tbar: [{
+							    	   text: "<?__('Add page')?>",
+							    	   iconCls: 'pages-add',
+							    	   handler: function() {
+											var window = CP.Pages.createNewPageForm();
+											window.show();
+										}
+									}, {
+										id: 'toolbar.buttondeleteMenuitem',
+										text: "<?__('Delete menuitem')?>",
+										iconCls: 'pages-delete',
+										disabled: true,
+										handler: function() {
+											var selectedNode = Ext.getCmp('Navigation.MenuTree').getSelectionModel().getSelectedNode();
+											if (selectedNode) { 
+												Ext.MessageBox.confirm('Confirmation dialog', "<?__('Are you sure want to delete this menuitem?')?>", function(buttonId) {
+													if (buttonId && ('yes' == buttonId)) {
+														Ext.Ajax.request({
+										    				url: '/inkoplan/admin/menuitems/delete_node/' + selectedNode.attributes.id,
+										    				msgBoxTitle: "<?__('Deleting menuitem')?>",
+										    				success: function(response, options) {
+																if (response.json.success) {
+																	Ext.getCmp('Navigation.MenuTree').getRootNode().reload();
+																	/*var rootNode = Ext.getCmp('Navigation.MenuTree').root;
+																	Ext.getCmp('Navigation.MenuTree').loader.load(rootNode);*/
+																}
+										    				}
+										    			});
+													}
+													
+												});
+											}
+										}
+								}],
+								items: [
+						        	CP.Pages.getNavigationItems()
+					        	]
+							}), 
+					        new Ext.Panel({
+					        	id: 'Sitedadmins',
+					        	module: 'Siteadmins',
+					            title: 'Siteadmin',
+								hideCollapseTool: true,
+								collapsible: false
+					        }),
+				            new Ext.Panel({
+				            	id: 'CompanyData',
+				            	module: 'CompanyData',
+				            	title: 'Company data',
+								hideCollapseTool: true,
+								titleCollapse:true,
+								listeners: {
+				            		click: function() {
+//			            				alert('sasasa');
+						            		/*Ext.Ajax.request({
+							    				url: '/inkoplan/siteadmins/edit_company_data/',
+							    				msgBoxTitle: "<?__('Getting compnay data')?>",
+							    				success: function(response, options) {
+						            				
+							    				}
+							    			});*/
+				            		}
+				            	}
+				            })
+	                    ]
+		        }),{
+                   	id: 'Layout.CenterPanel',
+	                region:'center',
+	                margins:'5 5 5 0',
+	                autoScroll: true
+	                	
+	            },{
+	            	id: 'Layout.NorthPanel',
+	            	region:'north',
+	            	baseCls: 'x-plain',
+	            	contentEl: 'top',
+	            	style: 'color: 2px black',
+	            	height: 50
+	            }]
+	        });
+	        
+	        var westRegion = Ext.getCmp('Layout.WestPanel');
+			Ext.each(westRegion.items.items, function() {
+				this.header.addListener('click', function() {
+					eval('var module = CP.' + this.module + ';');
+					if ('Siteadmins' == this.module) {
+						CP.Siteadmins.openCenterPanel();
+					}
+				}, this);
+				this.addListener('beforeexpand', function() {
+					return !this.hideCollapseTool; 
+				}, this);
+				this.addListener('beforecollapse', function() {
+					return !this.hideCollapseTool;
+				});
+			});
+			
+	        CP.Layout.global.addListener('showInCenter', function(panel) {
+				var centerPanel = Ext.getCmp('Layout.CenterPanel');
+				var existing = centerPanel.getComponent(0);
+				if ('undefined' != typeof(existing)) {
+					centerPanel.remove(existing);
+					CP.Layout.global.doLayout();
+				}
+				centerPanel.insert(0, panel);
+				panel.show();
+				CP.Layout.global.doLayout();
+	        });
+	        
+	        var mainDashboard = new Ext.Panel({});
+	        
+	        CP.Layout.global.fireEvent('showInCenter', mainDashboard);
+		}
+	}
+}();

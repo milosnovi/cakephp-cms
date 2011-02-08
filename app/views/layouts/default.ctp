@@ -4,16 +4,20 @@
 		<title><?= $title_for_layout ?></title>
 		<?= $this->Html->css('default', null, array('media' => 'screen')) ?>
 		<?= $this->Html->css('inkoplan', null, array('media' => 'screen')) ?>
-		<?= $this->Html->css('jquery-ui-1.8.1.custom') ?>
-		<?= $this->Html->script('jquery-1.4.2') ?>
-		<?= $this->Html->script('jquery-ui-1.8.1.custom.min') ?>
-		<?= $this->Html->script('jquery.form') ?>
-		<?= $scripts_for_layout ?>
+		
+		<link rel="stylesheet" type="text/css" href="js/ext-3.3.0/resources/css/ext-all.css" />
+		
+		<script type="text/javascript" src="js/ext-3.3.0/adapter/ext/ext-base.js"></script>
+        <script type="text/javascript" src="js/ext-3.3.0/ext-all-debug.js"></script>
+        
+        <script type="text/javascript" src="js/JSinkoplan.js"></script>
+		
+		<?=$scripts_for_layout;?>
 	</head>
  	<body class="bodyLayout">
 		<?= $this->element('header') ?>
 		<div id="content">
-			<?// = $this->element('session_messages') ?>
+			<?//= $this->element('session_messages') ?>
 			<?= $content_for_layout ?>
 		</div>
 		<?=$this->element('footer') ?>
