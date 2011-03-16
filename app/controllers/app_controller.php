@@ -5,6 +5,20 @@
 		var $helpers = array('Html', 'Form', 'Javascript', 'Ajax', 'Session');
 		var $components = array('Session', 'RequestHandler', 'Cookie');
 		
+		function beforeFilter() {
+			
+			/*
+			 * debug($this);
+			 * $siteadminData = $this->Session->read('siteadmin');
+			if (isAdminDomain() && $this->RequestHandler->isAjax() && !$siteadminData) {
+				if (!$siteadminData) {
+					debug('REDIRECT');
+					$this->redirect('/admin/siteadmins/login', 401);
+					exit();
+				}
+			}*/
+		}
+		
 		function beforeRender() {
 			$modelMenuitems = new menuitem();
 			$rootMainMenu = $modelMenuitems->find('first', array(
@@ -32,6 +46,10 @@
 					$this->set('sideMenuitems', $finalSideMenuitems);
 				}
 			}
+			$xmlObj = simplexml_load_string(file_get_contents('files/company_data.xml')); // convert string of XML into an object
+			$arrXml = objectsIntoArray($xmlObj);
+			$this->set('company_data', $arrXml); 
+			
 		}
 		
 		 public function returnJsonData($data) {

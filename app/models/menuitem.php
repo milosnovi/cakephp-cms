@@ -64,14 +64,17 @@ class Menuitem extends AppModel {
 			$isLeaf = (1 == $pom);
 			$finalMenuitemsArray[$index] = array(
 				'id' => $menuitem['Menuitem']['id'],
-				'menu_type' => $menuType, 
+				'menu_type' => $menuType,
+				'children' => array(),
 				'content_type' => $menuitem[MENUITEM][Menuitem::ContentType],
 				'content_id' => $menuitem[MENUITEM][Menuitem::ContentId],
 				'parent_id' => $menuitem[MENUITEM][Menuitem::ParantId],
 				'url' => $menuitem[MENUITEM][Menuitem::Url],
 				'text' => $menuitem[MENUITEM][Menuitem::Title],
-				'leaf' => $isLeaf,
-				'expanded' => $isLeaf ? true : false,				
+				/*'leaf' => $isLeaf,*/
+//				'leaf' => false,
+//				'expanded' => $isLeaf ? true : false,				
+				'expanded' => true,				
 				'cls' => 'folder',
 				'iconCls' => 'menu-page-node-icon'
 			);

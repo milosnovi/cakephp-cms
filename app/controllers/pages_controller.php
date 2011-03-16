@@ -22,11 +22,21 @@
 			$this->Menuitem->moveup($this->Menuitem->id,1);
 		}
 		
-		public function admin_delete_page($pageId, $menuitemId) {
+		public function admin_delete_page($pageId) {
 			$success = $this->Page->delete($pageId);
+			debug($success);
+			$menuitems = $this->Menuitem->find('all', array(
+				'conditions' => array(Menuitem::T_ContentId => $pageId)
+				)
+			);
+			$menuitemIds = Set::extract($menuitems, '{n}.'. MENUITEM . '.' .ID);
+			if (!empty($menuitemIds)) {
+				foreach($menuitemIds as $menuitemId) {
+					$this->Menuitem->id = $menuitemId;
+					$success &= $this->Menuitem->delete();
+				}
+			}
 			
-			$this->Menuitem->id = $menuitemId;
-			$success &= $this->Menuitem->delete();
 			$this->returnJsonData(array(
 				'success' => $success,
 				'message' => $success ? 'super' : 'loso' 
@@ -94,6 +104,8 @@
 		}
 		
 		public function admin_form($id = null) {
+			//debug($this->data);
+			//exit();
 			if (RequestHandlerComponent::isPost()) {
 				$this->Page->id = $this->data[PAGE][ID];
 				$this->Page->save(array(
@@ -103,7 +115,7 @@
 				$id = $this->Page->id;
 			}
 			$pageData = $this->__getPageData($id);
-			
+//	debug($pageData);
 			$this->returnJsonData(array(
 				'success' => true,
 				PAGE => $pageData['Page']
@@ -111,11 +123,17 @@
 		}
 		
 		private function __getPageData($pageId) {
-			$pageData = $this->Page->find('first', array(
-				'conditions' => array(
-					Page::Id => $pageId
+			$this->Menuitem->bindModel(array(
+				'belongsTo' => array(
+					'Page' => array(
+						'className' => 'Page',
+						'foreignKey' => Menuitem::ContentId,
+						'conditions' => array(Menuitem::T_ContentType => 'PAGE')
+					)
 				)
 			));
+			
+			$pageData = $this->Page->find('first', array('conditions' => array(Page::Id => $pageId)));
 			return $pageData;
 		}
 	}

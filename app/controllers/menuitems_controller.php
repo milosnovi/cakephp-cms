@@ -9,7 +9,8 @@ class MenuitemsController extends AppController {
 */		$finalArray = array();
 		$mainMenu = $this->Menuitem->generateExtMenuitems(1, Menuitem::TypeMain);
 		$finalArray[] = array(
-			'id' => 'Main_menu',
+			'id' => 1,
+		'menu_type' => Menuitem::TypeMain,
 			'text' => 'Main menu',
 			'rootMenu' => true,
 			'content_type' => 'ROOT',
@@ -19,10 +20,11 @@ class MenuitemsController extends AppController {
 			'children' => $mainMenu 
 		);
 		
-		$sideMenuitems = $this->Menuitem->generateExtMenuitems(6, Menuitem::TypeSide);
+		$sideMenuitems = $this->Menuitem->generateExtMenuitems(2, Menuitem::TypeSide);
 
 		$finalArray[] = array(
-			'id' => 'Side_menu',
+			'id' => 6,
+			'menu_type' => Menuitem::TypeSide, 
 			'text' => 'Side menu',
 			'rootMenu' => true,
 			'content_type' => 'ROOT',
@@ -42,6 +44,7 @@ class MenuitemsController extends AppController {
 			'expanded' => true,
 			'children' => $this->Page->getOrphanPages() 
 		);
+		
 		$this->returnJsonData($finalArray);
 	}
 	
@@ -61,35 +64,35 @@ class MenuitemsController extends AppController {
 	}
 	
 	public function admin_reorder_nodes() {
-		$this->data = $this->params['form'];
-		debug($this->params['form']);
+		//debug($this->params['form']['dropPoint']);
+		$dropPoint			= $this->params['form']['dropPoint'];  			
 		
-		$dropPageId 		= isset($this->data['dropPageId']) ?  $this->data['dropPageId'] : false;
-		$dropMenuitemId 	= isset($this->data['dropMenuitemId']) ? $this->data['dropMenuitemId'] : false;
-		$dropMenuType 		= isset($this->data['dropMenuType']) ? $this->data['dropMenuType'] : false;
-		$dropParentId 		= isset($this->data['dropParentId']) ? $this->data['dropParentId'] : false;
+		$dropPageId 		= isset($this->params['form']['dropPageId']) ?  $this->params['form']['dropPageId'] : false;
+		$dropMenuitemId 	= isset($this->params['form']['dropMenuitemId']) ? $this->params['form']['dropMenuitemId'] : false;
+		$dropMenuType 		= isset($this->params['form']['dropMenuType']) ? $this->params['form']['dropMenuType'] : false;
+		$dropParentId 		= isset($this->params['form']['dropParentId']) ? $this->params['form']['dropParentId'] : false;
 		 
-		$targetPageId 		= isset($this->data['targetPageId']) ? $this->data['targetPageId'] : false;
-		$targetMenuitemId 	= isset($this->data['targetMenuitemId']) ? $this->data['targetMenuitemId'] : false;
-		$targerMenuType		= isset($this->data['targetMenuType']) ? $this->data['targetMenuType'] : false;
-		$targerParentId 	= isset($this->data['targetParentId']) ? $this->data['targetParentId'] : false;
+		$targetPageId 		= isset($this->params['form']['targetPageId']) ? $this->params['form']['targetPageId'] : false;
+		$targetMenuitemId 	= (isset($this->params['form']['targetMenuitemId']) && ($this->params['form']['targetMenuitemId'] != 'Orphan_menu')) ? $this->params['form']['targetMenuitemId'] : false;
+		$targerMenuType		= isset($this->params['form']['targetMenuType']) ? $this->params['form']['targetMenuType'] : false;
+		$targerParentId 	= isset($this->params['form']['targetParentId']) ? $this->params['form']['targetParentId'] : false;
 
 		$dropAndTargetBelongsToSameMenu = $targerMenuType == $dropMenuType;
 		$dropAndTargetAreRelatives = $targerParentId == $dropParentId;
 		
+		$targerParentId = ('append' == $dropPoint) ? $targetMenuitemId : $targerParentId;
+		 
 		$moveToOrphan = !$targetMenuitemId && !$targerMenuType && !empty($dropMenuitemId);
-		debug($moveToOrphan); 
 		if ($moveToOrphan) { // MOVE TO ORPHAN => DELETE MENUITEM
 			$this->Menuitem->id = $dropMenuitemId;
 			$success = $this->Menuitem->delete();
 			$this->returnJsonData(array('success' => $success));
 		} else {
-			if (!$dropAndTargetBelongsToSameMenu && $targerMenuType && $dropMenuType) { //REORDER INSIDE THE MENU
+			if ($targerMenuType && $dropMenuType) { //REORDER INSIDE THE MENU
 				$this->Menuitem->id = $dropMenuitemId;
 				$data[MENUITEM][Menuitem::Type] 	= $targerMenuType;
 				$data[MENUITEM][Menuitem::ParantId] = $targerParentId;
 				$success = $this->Menuitem->save($data);
-				debug($success);
 				if(!$success) {
 					$this->returnJsonData(array('success' => false));
 				}

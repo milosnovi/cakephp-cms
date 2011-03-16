@@ -18,9 +18,7 @@ class Page extends AppModel {
 				)
 			)
 		));
-		$allPages = $this->find('all', array(
-			'order' => 'Page.modified ASC'
-		));
+		$allPages = $this->find('all', array('order' => 'Page.modified ASC'));
 		$orphanPages = array();
 		foreach ($allPages as $page) {
 			if (empty($page[MENUITEM])) {

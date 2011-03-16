@@ -5,7 +5,8 @@
 	
 		<title><?//= $title_for_layout ?></title>
 		
-		<script type="text/javascript" src="http://localhost/inkoplan/app/webroot/js/tinymce/jscripts/tiny_mce/tiny_mce_src.js"></script>
+		<script type="text/javascript" src="http://localhost/inkoplan/app/webroot/js/ckeditor/ckeditor.js"></script>
+		<script type="text/javascript" src="http://localhost/inkoplan/app/webroot/js/ckfinder/ckfinder.js"></script>
 				
 		<link rel="stylesheet" type="text/css" href="http://localhost/inkoplan/js/ext-3.3.0/resources/css/ext-all.css" />
 		<link rel="stylesheet" type="text/css" href="http://localhost/inkoplan/css/cp_ext.css" />
@@ -25,6 +26,7 @@
 	<script type="text/javascript" src="http://localhost/inkoplan/admin/siteadmins/loadjs/layout/layout.js"></script>		
 	<script type="text/javascript" src="http://localhost/inkoplan/admin/siteadmins/loadjs/pages/pages.js"></script>		
 	<script type="text/javascript" src="http://localhost/inkoplan/admin/siteadmins/loadjs/siteadmins/siteadmins.js"></script>		
+	<script type="text/javascript" src="http://localhost/inkoplan/admin/siteadmins/loadjs/CompanyData/company_data.js"></script>		
  	<script type="text/javascript">
  	
 	Ext.BLANK_IMAGE_URL = 'http://localhost/inkoplan/js/ext-3.3.0/resources/images/default/s.gif';

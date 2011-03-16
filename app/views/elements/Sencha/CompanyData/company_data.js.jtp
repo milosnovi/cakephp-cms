@@ -1,0 +1,89 @@
+Ext.namespace('CP');
+
+CP.CompanyData = function() {
+	return {
+		openCenterPanel: function() {
+			Ext.Ajax.request({
+				url: '/inkoplan/admin/siteadmins/edit_company_data',
+				msgBoxTitle: "<?__('Kurac')?>",
+				success: function(response, options) {
+	    			CP.CompanyData.openForm(response.json.company_data);
+				}
+			});
+		},
+		openForm: function(companyData) {
+			 var panelCompanyData = new Ext.Panel({
+	        	border: true,
+	        	autoHeight: true,
+	        	title: "<?__('Company data')?>",
+	        	items:[
+		       		new Ext.form.FormPanel({
+						id: 'Companydata.formPage',
+						border: false,
+						labelWidth: 100,
+						width: 300,
+						autoHeight: true,
+						style: 'padding: 10px',
+						items:[
+			        	   new Ext.form.TextField({
+			        		   name: "<?=MF2D('CompanyData.Title')?>",
+			        		   fieldLabel: 'Name',
+			        		   anchor: '100%',
+			        		   value: companyData.Title
+			        	   }),
+			        	   new Ext.form.TextField({
+			        		   name: "<?=MF2D('CompanyData.Address')?>",
+			        		   fieldLabel: 'Address',
+			        		   anchor: '100%',
+			        		   value: companyData.Address
+			        	   }),
+			        	   new Ext.form.TextField({
+			        		   name: "<?=MF2D('CompanyData.City')?>",
+			        		   fieldLabel: 'City',
+			        		   anchor: '100%',
+			        		   value: companyData.City
+			        	   }),
+			        	   new Ext.form.TextField({
+			        		   name: "<?=MF2D('CompanyData.Phone1')?>",
+			        		   fieldLabel: 'Phone1',
+			        		   anchor: '100%',
+			        		   value: companyData.Phone1
+			        	   }),
+			        	   new Ext.form.TextField({
+			        		   name: "<?=MF2D('CompanyData.Fax')?>",
+			        		   fieldLabel: 'Fax',
+			        		   anchor: '100%',
+			        		   value: companyData.Fax
+			        	   }),
+			        	   new Ext.form.TextField({
+			        		   name: "<?=MF2D('CompanyData.Email')?>",
+			        		   fieldLabel: 'Email',
+			        		   anchor: '100%',
+			        		   value: companyData.Email
+			        	   })
+						],
+						buttons: [{
+							id: 'Pages.formPage.panelContent.buttonSaveAndPublish',
+							text: 'Save',
+							handler: function () {
+								Ext.getCmp('Companydata.formPage').getForm().submit({
+									url: '/inkoplan/admin/siteadmins/edit_company_data',
+									msgBoxTitle: "<?__('Saving page')?>",
+									success: function(form, action) {
+										
+									}
+								});
+							}
+						},{
+							text: 'Close',
+							handler: function() {
+							
+							}
+						}]
+					})
+			     ]
+			 });
+			 CP.Layout.global.fireEvent('showInCenter', panelCompanyData);
+		}
+	}
+}();

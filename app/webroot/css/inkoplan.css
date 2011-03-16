@@ -421,14 +421,53 @@ body #main {
 
 pre p {
 	background:none repeat scroll 0 0 #F0F0F0;
+
+}
+#siteadmin_login {
+	width: 350px;
+	margin-left: auto;
+	margin-right: auto;
+}
+#siteadmin_login fieldset{
+	color: black;
+	background-color: silver;
+	border: 1px solid black;
 }
 
+#siteadmin_login li{
+	margin: 10px 0;
+}
 
+#siteadmin_login li label{
+	float: left;
+	width: 80px;
+	color: black;
+}
+#siteadmin_login #forgotten_password {
+	color: white;
+}
+.remember_me{
+	margin-left: 10px;
+}
 
+#siteadmin_login li	.button{
+	float: left;
+    margin-left: 77px;
+}
 
-
-
-
-
-
-
+#siteadmin_login .remember_me label {
+    float: left;
+    margin-left: 18px;
+    width: 122px;
+}
+#siteadmin_login #forgotten_password{
+	margin-top: 6px;
+	float: left;
+    text-align: center;
+    width: 351px;
+}
+#session_messages .message{
+	color: red;
+	text-align: center;
+	margin-top: 5px;
+}

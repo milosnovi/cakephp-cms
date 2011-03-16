@@ -11,24 +11,28 @@ CP.Layout = function() {
 			        	id: 'Layout.WestPanel',
 			        	border: true,
 			            region:'west',
-			            margins: '5 0 5 5',
-			            split: true,
+			            margins: '5px',
 			            width: 210,
-			            baseCls: 'x-plain',
-			            layout:'accordion',
-			            layoutConfig: {animate: true},
+//			            baseCls: 'x-plain',
+			            layout: 'accordion',
+			            layoutConfig: {
+                   			animate: true
+               			},
+               			defaults: {
+               				border: false
+               			},
 			            items: [
 		                    new Ext.form.FormPanel({
 								title: 'Pages',
+								module: 'Pages',
 								collapsible: true,
 								autoScroll: true,
 								width: 200,
-								module: 'Page',
 								tbar: [{
 							    	   text: "<?__('Add page')?>",
 							    	   iconCls: 'pages-add',
 							    	   handler: function() {
-											var window = CP.Pages.createNewPageForm();
+											var window = CP.Pages.createNewPageWindow();
 											window.show();
 										}
 									}, {
@@ -77,7 +81,7 @@ CP.Layout = function() {
 								titleCollapse:true,
 								listeners: {
 				            		click: function() {
-//			            				alert('sasasa');
+			            				alert('sasasa');
 						            		/*Ext.Ajax.request({
 							    				url: '/inkoplan/siteadmins/edit_company_data/',
 							    				msgBoxTitle: "<?__('Getting compnay data')?>",
@@ -92,9 +96,11 @@ CP.Layout = function() {
 		        }),{
                    	id: 'Layout.CenterPanel',
 	                region:'center',
-	                margins:'5 5 5 0',
-	                autoScroll: true
-	                	
+	                margins:'5px 5px 5px 0',
+	                autoScroll: true,
+	                border: true,
+//	                style: 'padding: 5px 0 0 5px'
+	                baseCls: 'x-plain'
 	            },{
 	            	id: 'Layout.NorthPanel',
 	            	region:'north',
@@ -109,9 +115,7 @@ CP.Layout = function() {
 			Ext.each(westRegion.items.items, function() {
 				this.header.addListener('click', function() {
 					eval('var module = CP.' + this.module + ';');
-					if ('Siteadmins' == this.module) {
-						CP.Siteadmins.openCenterPanel();
-					}
+					module.openCenterPanel();
 				}, this);
 				this.addListener('beforeexpand', function() {
 					return !this.hideCollapseTool; 
@@ -133,9 +137,7 @@ CP.Layout = function() {
 				CP.Layout.global.doLayout();
 	        });
 	        
-	        var mainDashboard = new Ext.Panel({});
-	        
-	        CP.Layout.global.fireEvent('showInCenter', mainDashboard);
+	        CP.Layout.global.fireEvent('showInCenter', CP.Pages.getDashboard());
 		}
 	}
 }();
