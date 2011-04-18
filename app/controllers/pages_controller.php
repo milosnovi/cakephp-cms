@@ -3,7 +3,29 @@
 		var $uses = array('Page', 'Menuitem');
 	
 		public function home() {
-			$this->set('active_main_menuitem', 2);
+			$this->set('title_for_layout', 'Inkoplan d.o.o.');
+			$this->set('active_main_menuitem', 3);
+			
+			$pageData = $this->Page->find('first', array(
+				'conditions' => array(
+					Page::Id => 3
+				)
+			));
+			$html_reg = "/<+\s*\/*\s*([A-Z][A-Z0-9]*)\b[^>]*\/*\s*>+/i";
+			//$pageData[PAGE][Page::Content] = preg_replace($html_reg, '', mb_substr($pageData[PAGE][Page::Content], 0, 800));
+			$pageContent = substr(strip_tags($pageData[PAGE][Page::Content]), 0, 700);
+			$pageData[PAGE][Page::Content] = sprintf('%s...', $pageContent);
+			$this->set('adr_info', $pageData);
+			
+			$page2 = $this->Page->find('first', array(
+				'conditions' => array(
+					Page::Id => 4
+				)
+			));
+//			$page2[PAGE][Page::Content] = htmlentities(preg_replace($html_reg, '', mb_substr($page2[PAGE][Page::Content], 0, 800)), ENT_COMPAT, 'UTF-8');
+			$pageContent = substr(strip_tags($page2[PAGE][Page::Content]), 0, 700);
+			$page2[PAGE][Page::Content] = sprintf('%s...', $pageContent);
+			$this->set('procena_rizika', $page2);
 		}
 		
 		public function admin_add_page() {
@@ -58,7 +80,7 @@
 				$isMainMenu = $this->data[MENUITEM][Menuitem::A_MainMenu];
 				
 				$data[MENUITEM] = array(
-					Menuitem::ParantId => $isMainMenu ? 1 : 6,
+					Menuitem::ParantId => $isMainMenu ? 1 : 2,
 					Menuitem::Title => $this->data[PAGE][Page::Title],
 					Menuitem::Type => $isMainMenu ? Menuitem::TypeMain : Menuitem::TypeSide,
 					Menuitem::ContentType => PAGE,
@@ -85,7 +107,8 @@
 		}
 		
 		public function contact() {
-			$menuitem = $this->Menuitem->find('first', array('conditions' => array('menuitem.url' =>'contact')));
+			$this->set('title_for_layout', 'Inkoplan d.o.o. :: Contact');
+			$menuitem = $this->Menuitem->find('first', array('conditions' => array('menuitem.url' =>'/contact')));
 			$this->set('active_main_menuitem', $menuitem['Menuitem']['id']);
 			if ($this->RequestHandler->isPost()) {
 				
@@ -99,13 +122,12 @@
 					Menuitem::T_ContentType => 'PAGE'
 				))
 			);
+			$this->set('title_for_layout', "Inkoplan :: {$activeMenuitem[PAGE][Page::Title]}");
 			$this->set('active_main_menuitem', $activeMenuitem['Menuitem']['id']);
 			$this->set('page', $this->Page->find('first', array('conditions' => array('Page.id' => $id))));
 		}
 		
 		public function admin_form($id = null) {
-			//debug($this->data);
-			//exit();
 			if (RequestHandlerComponent::isPost()) {
 				$this->Page->id = $this->data[PAGE][ID];
 				$this->Page->save(array(
@@ -115,7 +137,6 @@
 				$id = $this->Page->id;
 			}
 			$pageData = $this->__getPageData($id);
-//	debug($pageData);
 			$this->returnJsonData(array(
 				'success' => true,
 				PAGE => $pageData['Page']
@@ -137,20 +158,3 @@
 			return $pageData;
 		}
 	}
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-

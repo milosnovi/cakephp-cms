@@ -5,7 +5,7 @@ CP.CompanyData = function() {
 		openCenterPanel: function() {
 			Ext.Ajax.request({
 				url: '/inkoplan/admin/siteadmins/edit_company_data',
-				msgBoxTitle: "<?__('Kurac')?>",
+				msgBoxTitle: "<?__('Load company data')?>",
 				success: function(response, options) {
 	    			CP.CompanyData.openForm(response.json.company_data);
 				}
@@ -73,11 +73,6 @@ CP.CompanyData = function() {
 										
 									}
 								});
-							}
-						},{
-							text: 'Close',
-							handler: function() {
-							
 							}
 						}]
 					})

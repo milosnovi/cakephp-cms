@@ -42,7 +42,7 @@ label span.required {
 	background:none repeat scroll 0 0 #F0F0F0;
 	border:1px solid #FFFFFF;
 	color:#797979;
-	font-size:10px;
+	font-size:14px;
 	line-height:1.5;
 	clear:both;
 	float:left;
@@ -60,6 +60,7 @@ label span.required {
 	margin-top:6px;
 	padding:14px;
 	width:930px;
+	min-height: 400px;
 }
 
 #header {

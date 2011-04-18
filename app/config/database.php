@@ -82,6 +82,16 @@ class DATABASE_CONFIG {
 		'database' => 'inkoplan',
 		'prefix' => '',
 	);
+	
+	/*var $default = array(
+		'driver' => 'mysql',
+		'persistent' => false,
+		'host' => '184.168.154.57',
+		'login' => 'inkoplan',
+		'password' => 'Qwerty21',
+		'database' => 'inkoplan',
+		'prefix' => '',
+	);*/
 
 	/*var $test = array(
 		'driver' => 'mysql',

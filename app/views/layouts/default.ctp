@@ -20,13 +20,14 @@
 		<?//$scripts_for_layout;?>
 	</head>
  	<body class="bodyLayout">
+ 		<div style="border:1px solid red; color: red; font-size: 35px; text-align: center; margin: 10px 0;">This site is still under construction</div>
 		<?= $this->element('header') ?>
 		<div id="content">
 			<?//= $this->element('session_messages') ?>
 			<?= $content_for_layout ?>
 		</div>
 		<?=$this->element('footer', array('company_data' => $company_data)) ?>
-		<?= $this->element('sql_dump'); ?>
+		<?=$this->element('sql_dump'); ?>
 		<?php if(isset($js)) echo $js->writeBuffer(); ?>
 	</body>
 </html>

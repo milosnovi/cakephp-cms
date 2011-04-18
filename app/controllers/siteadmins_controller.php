@@ -12,7 +12,6 @@
 		}
 		
 		public function admin_login() {
-			debug($this->data);
 			$cookiesData = $this->Cookie->read('Siteadmin.login');
 			if ($cookiesData) {
 				$siteadmin = $this->Siteadmin->find('all', array(

@@ -335,7 +335,7 @@ CP.Pages = function() {
 														filebrowserImageBrowseUrl : '/inkoplan/js/ckfinder/ckfinder.html?type=Images',
 														filebrowserUploadUrl : '/inkoplan/js/ckfinder/core/connector/php/connector.php?command=QuickUpload&type=Files&currentFolder=/xxx',
 														filebrowserImageUploadUrl : '/inkoplan/js/ckfinder/core/connector/php/connector.php?command=QuickUpload&type=Images&currentFolder=/xxx',
-						        						toolbar: [ 
+						        						/*toolbar: [ 
 				        						           ['NewPage','Preview'],
 					        						           ['Cut','Copy','Paste','PasteText','PasteFromWord','-','Scayt'],
 					        						           ['Undo','Redo','-','Find','Replace','-','SelectAll','RemoveFormat'],
@@ -346,7 +346,7 @@ CP.Pages = function() {
 					        						           ['NumberedList','BulletedList','-','Outdent','Indent','Blockquote'],
 					        						           ['Link','Unlink','Anchor'],
 					        						           ['Maximize','-','About']
-							        					]}
+							        					]*/}
 							        				);
 							        			}
 							        		}

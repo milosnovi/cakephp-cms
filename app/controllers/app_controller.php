@@ -6,16 +6,9 @@
 		var $components = array('Session', 'RequestHandler', 'Cookie');
 		
 		function beforeFilter() {
-			
-			/*
-			 * debug($this);
-			 * $siteadminData = $this->Session->read('siteadmin');
-			if (isAdminDomain() && $this->RequestHandler->isAjax() && !$siteadminData) {
-				if (!$siteadminData) {
-					debug('REDIRECT');
-					$this->redirect('/admin/siteadmins/login', 401);
-					exit();
-				}
+			/*if (isAdminDomain() && !empty($this->params['isAjax']) && !$this->Session->read('siteadmin')) {
+				$this->redirect('/admin/siteadmins/login', 401);
+				exit();
 			}*/
 		}
 		

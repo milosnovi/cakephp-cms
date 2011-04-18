@@ -13,7 +13,7 @@
 					<?php $active_main_menuitem = !empty($active_main_menuitem) ? $active_main_menuitem : false?>
 					<? $activeClass = $menuitem['Menuitem']['id'] == $active_main_menuitem; ?>
 					<li class="<?=$menuitem['Menuitem']['class'] . ($activeClass ? ' active' : '')?>">
-						<a title="<?=$menuitem['Menuitem']['title']?>" href="/inkoplan/<?=$menuitem['Menuitem']['url']?>"><span><?=$menuitem['Menuitem']['title']?></span></a>
+						<a title="<?=$menuitem['Menuitem']['title']?>" href="/inkoplan<?=$menuitem['Menuitem']['url']?>"><span><?=$menuitem['Menuitem']['title']?></span></a>
 					</li>
 				<?php endforeach; ?>
 			</ul>				
