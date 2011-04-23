@@ -148,4 +148,38 @@ class MenuitemsController extends AppController {
 		}
 		$this->returnJsonData(array('success' => true));
 	}
+	public function admin_rename_page() {
+		if (!isset($this->data[MENUITEM][ID]) || !isset($this->data[MENUITEM][Page::Title])) {
+			$this->returnJsonData(array(
+				'success' => false,
+				'message' => __('Invalid data supplied')
+			));
+		}
+		$this->Menuitem->id = $this->data[MENUITEM][ID];
+		$success = $this->Menuitem->save(array(Menuitem::Title => $this->data[MENUITEM][Menuitem::Title]));
+		
+		$this->Menuitem->bindModel(array(
+			'belongsTo' => array(
+				'Page' => array(
+					'className' => 'Page',
+					'foreignKey' => Menuitem::ContentId,
+					'conditions' => array(Menuitem::T_ContentType => 'PAGE')
+				)
+			)
+		));
+			
+		$pageData = $this->Menuitem->find('first', array('conditions' => array(Menuitem::Id => $this->Menuitem->id)));
+		$this->returnJsonData(array(
+			'success' => true,
+			PAGE => $pageData 
+		));
+	}
 }
+
+
+
+
+
+
+
+

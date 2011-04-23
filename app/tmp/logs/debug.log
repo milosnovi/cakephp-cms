@@ -1,0 +1,8 @@
+2011-03-16 00:27:17 Debug: Notice (8): Undefined variable: menuitemsData in [D:\wamp\www\inkoplan\app\views\elements\header.ctp, line 12]
+2011-03-16 00:27:30 Debug: Notice (8): Undefined variable: menuitemsData in [D:\wamp\www\inkoplan\app\views\elements\header.ctp, line 12]
+2011-03-16 23:00:27 Debug: Notice (8): Undefined index: isAjax in [D:\wamp\www\inkoplan\app\controllers\app_controller.php, line 10]
+2011-03-16 23:00:37 Debug: Notice (8): Undefined index: isAjax in [D:\wamp\www\inkoplan\app\controllers\app_controller.php, line 10]
+2011-03-16 23:00:37 Debug: Notice (8): Undefined index: isAjax in [D:\wamp\www\inkoplan\app\controllers\app_controller.php, line 10]
+2011-03-21 19:21:35 Debug: Notice (8): Use of undefined constant UTF - assumed 'UTF' in [D:\wamp\www\inkoplan\app\controllers\pages_controller.php, line 15]
+2011-03-21 19:21:35 Debug: Notice (8): Use of undefined constant UTF - assumed 'UTF' in [D:\wamp\www\inkoplan\app\controllers\pages_controller.php, line 23]
+2011-04-23 22:33:04 Debug: Notice (8): Undefined index: title in [D:\wamp\www\inkoplan\app\controllers\menuitems_controller.php, line 159]

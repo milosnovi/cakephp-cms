@@ -36,6 +36,99 @@ CP.Pages = function() {
 					allowDrop: false,
 		            id: 'src'
 		        },
+		        contextMenu: new Ext.menu.Menu({
+		            items: [{
+			                id: 'add-item',
+			                text: 'Add menuitem'
+			            },{
+		                	id: 'delete-item',
+		                	text: 'Delete menuitem'
+		            	},{
+	            			id: 'rename-item',
+	            			text: 'Rename menuitem'
+		            }],
+		            listeners: {
+		                itemclick: function(item) {
+		                	var editNodeData = item.parentMenu.contextNode.attributes;
+		                	console.log(editNodeData);
+		                    switch (item.id) {
+		                        case 'rename-item': {
+		                        	var windowRenameNewPage = new Ext.Window({
+		                				id: 'Pages.Window.RenameNewPage',
+		                				title: "<?__('Edit page')?>",
+		                				width: 400,
+		                				autoHeight: true,
+		                				modal: true,
+		                				plain: true,
+		                				resizable: false,
+		                				buttonAlign: 'center',
+		                				constrainHeader: true,
+		                				items: [
+		                					new Ext.form.FormPanel({
+				        	        			id: 'RenamePageFormDashboard',
+				        	        			autoHeight: true,
+				        	        			border: true,
+		//		        			        	baseCls: 'x-plain',
+				        			        	items: [
+													new Ext.form.FieldSet({
+														border: false,
+														labelWidth: 100,
+														bodyStyle: 'padding: 5px',
+														items: [{
+																xtype: 'hidden',
+																value: editNodeData.id,
+													    		name: '<?=MF2D(Menuitem::Id)?>'
+															},
+																new Ext.form.TextField({
+																	fieldLabel: 'Page name',
+																	anchor: '95%',
+																	value: editNodeData.menuitem_title,
+														    		name: '<?=MF2D(Menuitem::T_Title)?>'
+																})
+														   ]
+														})
+				        		    	        ],
+				        	        			buttons: [{
+				        							id: 'RenamePageFormDashboard.EditPageForm.Save',
+				        							text: "<?__('Save')?>",
+				        							handler: function () {
+				        				        		Ext.getCmp('RenamePageFormDashboard').getForm().submit({
+				        									url: '/inkoplan/admin/menuitems/rename_page/',
+				        									msgBoxTitle: "<?__('Creating page')?>",
+				        									success: function(form, action) {
+				        						    			if (action.result.success) {
+				        						    				Ext.getCmp('Navigation.MenuTree').getRootNode().reload();
+				        						    				if ('CUSTOM' != action.result.<?=PAGE?>.<?=Menuitem::T_ContentType?>) {
+				        						    					CP.Pages.showEditPageForm(action.result.<?=PAGE?>);
+				        						    				}
+				        						    				windowRenameNewPage.close();
+				        						    			}
+				        									}
+				        								});
+				        			        		}
+			        							},{
+			        								id: 'PagesDashboard.EditPageForm.Close',
+				        							text: "<?__('Close')?>",
+				        							handler: function () {
+				        								windowRenameNewPage.close();
+				        			        		}
+			        							}]
+		                					})
+	                					]
+		                        	});
+		                        	windowRenameNewPage.show();
+		                            break;
+		                        }
+		                        case 'delete-item': {
+		                        	var n = item.parentMenu.contextNode;
+		                            if (n.parentNode) {
+		                                n.remove();
+		                            }
+		                        }
+		                    }
+		                }
+		            }
+		        }),
 		        listeners: {
 		        	startdrag: function(tree, node, event) {//-1
 		        	/*console.log('startDrag');*/
@@ -113,7 +206,15 @@ CP.Pages = function() {
 			        			CP.Pages.openCenterPanel(node.attributes.content_id);
 			        		}
 		        		}
-		        	}
+		        	},
+		            contextmenu: function(node, e) {
+	            		//Register the context node with the menu so that a Menu Item's handler function can access
+	            		//it via its parentMenu property.
+		                node.select();
+		                var c = node.getOwnerTree().contextMenu;
+		                c.contextNode = node;
+		                c.showAt(e.getXY());
+	            	}
 		        }
 		    });
 		},
@@ -212,8 +313,7 @@ CP.Pages = function() {
 					      CP.Pages.createNewPageForm()
 				       ]
 					})
-			    ,
-		        buttons: [{
+			    ,buttons: [{
 					id: 'Pages.formPage.AddPageForm.Save',
 					text: "<?__('Save')?>",
 					handler: function () {

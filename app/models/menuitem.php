@@ -64,6 +64,7 @@ class Menuitem extends AppModel {
 			$isLeaf = (1 == $pom);
 			$finalMenuitemsArray[$index] = array(
 				'id' => $menuitem['Menuitem']['id'],
+				'menuitem_title' => $menuitem[MENUITEM][Menuitem::Title],
 				'menu_type' => $menuType,
 				'children' => array(),
 				'content_type' => $menuitem[MENUITEM][Menuitem::ContentType],
