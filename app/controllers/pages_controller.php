@@ -110,8 +110,43 @@
 			$this->set('title_for_layout', 'Inkoplan d.o.o. :: Contact');
 			$menuitem = $this->Menuitem->find('first', array('conditions' => array('menuitem.url' =>'/contact')));
 			$this->set('active_main_menuitem', $menuitem['Menuitem']['id']);
+			
 			if ($this->RequestHandler->isPost()) {
+				require_once(MODELS . 'usercontact.php');
+				$modelUserContact = new UserContact();
+			    $modelUserContact->set($this->data['Usercontact']);
+				$errors = $modelUserContact->invalidFields();
 				
+				if ($errors) {
+					$validationError = '';
+					foreach($errors as $field => $error_message) {
+						$validationError .= sprintf('%s: %s<br/>', $field, $error_message);
+					}
+					$this->Session->setFlash($validationError);
+				} else {
+					$fromName = $this->data['Usercontact'][UserContact::Name];
+					$fromEmail = $this->data['Usercontact'][UserContact::Email];
+					$message = $this->data['Usercontact'][UserContact::Message];
+					
+					$this->Email->to = 'm.novicevic@gmail.com';
+					$this->Email->subject = 'Inkoplan:: Kontakt strana';
+					$this->Email->replyTo = sprintf('%s <%s>', $fromName, $fromEmail);
+					$this->Email->from = sprintf('%s', $fromName);
+					$this->Email->template = 'contact';
+					$this->Email->layout = 'default';
+					$this->Email->sendAs = 'both';
+					
+					// Set view variables as normal
+					$this->set('fromName', $fromName);
+					$this->set('fromEmail', $fromEmail);
+					$this->set('message', $message);
+					
+					// Do not pass any args to send()
+					$sent = $this->Email->send();
+					if (!$sent) {
+						$result = sprintf( __("SMTP Error. %s", true), $this->Email->smtpError);
+					}
+				}				
 			}
 		}
 		

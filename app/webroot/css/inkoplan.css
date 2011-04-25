@@ -467,6 +467,13 @@ pre p {
     text-align: center;
     width: 351px;
 }
+
+#contact_form #session_messages .message{
+	color: red;
+	text-align: left;
+	margin-top: 5px;
+}
+
 #session_messages .message{
 	color: red;
 	text-align: center;

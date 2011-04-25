@@ -34,7 +34,7 @@
 					</div>
 				</div>
 			</fieldset>
-	<?=$form->end()?>
+		<?=$form->end()?>
 	</div>
 	</body>
 </html>

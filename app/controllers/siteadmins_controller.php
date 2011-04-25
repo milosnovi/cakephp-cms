@@ -28,7 +28,6 @@
 				}
 			}
 			if (isset($this->data)) {
-				debug($this->data);
 				$siteadmin = $this->Siteadmin->find('all', array(
 					'conditions' => array(
 						Siteadmin::T_Username => $this->data[SITEADMIN][Siteadmin::Username],
@@ -52,7 +51,7 @@
 					exit();
 				}
 			}
-			$this->viewPath = 'siteadmins';
+			//$this->viewPath = 'siteadmins';
 			echo $this->render('admin_login', 'empty');
 			exit(0);
 		}

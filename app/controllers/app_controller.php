@@ -3,7 +3,7 @@
 	
 	class AppController extends Controller{
 		var $helpers = array('Html', 'Form', 'Javascript', 'Ajax', 'Session');
-		var $components = array('Session', 'RequestHandler', 'Cookie');
+		var $components = array('Session', 'RequestHandler', 'Cookie', 'Email');
 		
 		function beforeFilter() {
 			/*if (isAdminDomain() && !empty($this->params['isAjax']) && !$this->Session->read('siteadmin')) {

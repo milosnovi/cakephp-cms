@@ -5,7 +5,10 @@
 	Fill out the form below to send us a message. Fields marked with <span style="color: red">*</span> are required.<br/>
 	One of our staff will contact you.
 	</p>
-	<form action="" method="post">
+	<form id="contact_form" action="" method="post">
+		<div id="session_messages" style="text-align: left;">
+			<?php echo $session->flash(); ?>
+		</div>
 		<fieldset style="display: none;">
 			<input type="hidden" value="POST" name="_method">
 		</fieldset>	
