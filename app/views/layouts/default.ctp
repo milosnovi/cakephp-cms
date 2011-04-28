@@ -7,14 +7,6 @@
 		<?= $this->Html->css('default', null, array('media' => 'screen')) ?>
 		<?= $this->Html->css('inkoplan', null, array('media' => 'screen')) ?>
 
-		<!--
-			<link rel="stylesheet" type="text/css" href="js/ext-3.3.0/resources/css/ext-all.css" />
-			
-			<script type="text/javascript" src="js/ext-3.3.0/adapter/ext/ext-base.js"></script>
-	        <script type="text/javascript" src="js/ext-3.3.0/ext-all-debug.js"></script>
-	        
-	        <script type="text/javascript" src="js/JSinkoplan.js"></script>
-        -->
         <script type="text/javascript" src="js/jquery-1.4.2.js"></script>
 		
 		<?//$scripts_for_layout;?>

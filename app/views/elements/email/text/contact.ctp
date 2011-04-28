@@ -1,1 +1,1 @@
-<?php echo $someValue; ?> 
+<?=$someValue; ?> 

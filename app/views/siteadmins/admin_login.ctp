@@ -26,7 +26,7 @@
 								<?=$form->password(Siteadmin::Password, array('class' => 'text'))?>
 							</li>
 							<li class="remember_me">
-								<input type="submit" class="button" value="<?__('Login')?>" />
+								<input type="submit" class="button" value='Login' />
 								<?=$form->label('RememberLogin', $form->checkbox(Siteadmin::A_RememberMe). __(' Remember me', true))?>
 							</li>
 						</ul>

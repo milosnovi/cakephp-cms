@@ -80,7 +80,7 @@ CP.Pages = function() {
 													    		name: '<?=MF2D(Menuitem::Id)?>'
 															},
 																new Ext.form.TextField({
-																	fieldLabel: 'Page name',
+																	fieldLabel: "<?__('Page name')?>",
 																	anchor: '95%',
 																	value: editNodeData.menuitem_title,
 														    		name: '<?=MF2D(Menuitem::T_Title)?>'
@@ -197,7 +197,7 @@ CP.Pages = function() {
 		        		if (!node.attributes.rootMenu) {
 			        		if ('CUSTOM' == node.attributes.content_type) {
 		        				Ext.MessageBox.show({
-		        					title: 'Warning message',
+		        					title: "<?__('Warning message')?>",
 		        					msg: 'This page can\'t be edited. Please contact administrator for further information!',
 		        					buttons: Ext.MessageBox.OK,
 		        					icon: Ext.MessageBox.WARNING
@@ -374,7 +374,7 @@ CP.Pages = function() {
 		        			Ext.Ajax.request({
 //		        				url: '/inkoplan/admin/pages/delete_page/' + pageData.<?=Page::Id?>,
 	    	    				url: '/inkoplan/admin/pages/delete_page/' + Ext.getCmp('Pages.formPage.panelContent.pageId').getValue(),
-	    	    				msgBoxTitle: "Deleting page",
+	    	    				msgBoxTitle: "<?__('Deleting page')?>",
 	    	    				success: function(response, options) {
 	    	    					Ext.getCmp('Navigation.MenuTree').getRootNode().reload();
 	    	    				}
@@ -388,7 +388,7 @@ CP.Pages = function() {
 	    	        		pageId = Ext.get('Pages.formPage.panelContent.pageId').getValue();
 	    	            	Ext.Ajax.request({
 	    	    				url: '/inkoplan/admin/pages/form/' + pageId,
-	    	    				msgBoxTitle: "Reloading page",
+	    	    				msgBoxTitle: "<?__('Reloading page')?>",
 	    	    				success: function(response, options) {
 	    	    	    			CP.Pages.showEditPageForm(Ext.decode(response.responseText));
 	    	    				}
@@ -430,12 +430,12 @@ CP.Pages = function() {
 							        		value: pageData.<?=Page::T_Content?>,
 							        		listeners: {
 							        			afterrender: function(content) {
-						        					CKEDITOR.replace(this.id, {
-														filebrowserBrowseUrl : '/inkoplan/js/ckfinder/ckfinder.html',
+						        					var editor = CKEDITOR.replace(this.id, {
 														filebrowserImageBrowseUrl : '/inkoplan/js/ckfinder/ckfinder.html?type=Images',
-														filebrowserUploadUrl : '/inkoplan/js/ckfinder/core/connector/php/connector.php?command=QuickUpload&type=Files&currentFolder=/xxx',
-														filebrowserImageUploadUrl : '/inkoplan/js/ckfinder/core/connector/php/connector.php?command=QuickUpload&type=Images&currentFolder=/xxx',
-						        						/*toolbar: [ 
+														filebrowserUploadUrl : '/inkoplan/js/ckfinder/core/connector/php/connector.php?command=QuickUpload&type=Files&currentFolder=/inkoplan/app/webroot/img/admin/',
+														filebrowserImageUploadUrl : '/inkoplan/js/ckfinder/core/connector/php/connector.php?command=QuickUpload&type=Images&currentFolder=/inkoplan/app/webroot/img/',
+														height: 400,
+						        						toolbar: [ 
 				        						           ['NewPage','Preview'],
 					        						           ['Cut','Copy','Paste','PasteText','PasteFromWord','-','Scayt'],
 					        						           ['Undo','Redo','-','Find','Replace','-','SelectAll','RemoveFormat'],
@@ -446,8 +446,9 @@ CP.Pages = function() {
 					        						           ['NumberedList','BulletedList','-','Outdent','Indent','Blockquote'],
 					        						           ['Link','Unlink','Anchor'],
 					        						           ['Maximize','-','About']
-							        					]*/}
+							        					]}
 							        				);
+						        					CKFinder.setupCKEditor(editor, '/inkoplan/js/ckfinder/');
 							        			}
 							        		}
 					        	       

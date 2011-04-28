@@ -1,9 +1,8 @@
 <div class="contact">
-<h1>Contact us</h1>
+<h1><?__('Contact us', true)?></h1>
 <div class="contact_content" >
 	<p>
-	Fill out the form below to send us a message. Fields marked with <span style="color: red">*</span> are required.<br/>
-	One of our staff will contact you.
+	<?__('Fill out the form below to send us a message. Fields marked with <span style="color: red">*</span> are required.<br/>One of our staff will contact you.', true)?>
 	</p>
 	<form id="contact_form" action="" method="post">
 		<div id="session_messages" style="text-align: left;">
@@ -15,18 +14,18 @@
 		<fieldset>
 			<ul>
 				<li>
-					<label for="UsercontactName">Name/Company:<span class="required">*</span></label>
+					<label for="UsercontactName"><?__('Name/Company:', true)?><span class="required">*</span></label>
 					<input type="text" id="UsercontactName" class="text autofocus" value="" name="data[Usercontact][name]">
 				</li>
 				
 				<li>
-					<label for="UsercontactEmail">Your email:<span class="required">*</span></label>
+					<label for="UsercontactEmail"><?__('Your email:', true)?><span class="required">*</span></label>
 					<input type="text" id="UsercontactEmail" class="text" value="" name="data[Usercontact][email]">
 				</li>
 			</ul>
 		</fieldset>
 		<fieldset>
-			<legend><label for="UsercontactMessage">Message:<span class="required">*</span></label></legend>
+			<legend><label for="UsercontactMessage"><?__('Message:', true)?><span class="required">*</span></label></legend>
 			<textarea id="UsercontactMessage" rows="10" cols="50" name="data[Usercontact][message]"></textarea>		
 		</fieldset>
 		<p>

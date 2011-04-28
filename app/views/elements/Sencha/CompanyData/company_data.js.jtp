@@ -27,37 +27,37 @@ CP.CompanyData = function() {
 						items:[
 			        	   new Ext.form.TextField({
 			        		   name: "<?=MF2D('CompanyData.Title')?>",
-			        		   fieldLabel: 'Name',
+			        		   fieldLabel: "<?__('Name')?>",
 			        		   anchor: '100%',
 			        		   value: companyData.Title
 			        	   }),
 			        	   new Ext.form.TextField({
 			        		   name: "<?=MF2D('CompanyData.Address')?>",
-			        		   fieldLabel: 'Address',
+			        		   fieldLabel: "<?__('Address')?>",
 			        		   anchor: '100%',
 			        		   value: companyData.Address
 			        	   }),
 			        	   new Ext.form.TextField({
 			        		   name: "<?=MF2D('CompanyData.City')?>",
-			        		   fieldLabel: 'City',
+			        		   fieldLabel: "<?__('City')?>",
 			        		   anchor: '100%',
 			        		   value: companyData.City
 			        	   }),
 			        	   new Ext.form.TextField({
 			        		   name: "<?=MF2D('CompanyData.Phone1')?>",
-			        		   fieldLabel: 'Phone1',
+			        		   fieldLabel: "<?__('Phone1')?>",
 			        		   anchor: '100%',
 			        		   value: companyData.Phone1
 			        	   }),
 			        	   new Ext.form.TextField({
 			        		   name: "<?=MF2D('CompanyData.Fax')?>",
-			        		   fieldLabel: 'Fax',
+			        		   fieldLabel: "<?__('Fax')?>",
 			        		   anchor: '100%',
 			        		   value: companyData.Fax
 			        	   }),
 			        	   new Ext.form.TextField({
 			        		   name: "<?=MF2D('CompanyData.Email')?>",
-			        		   fieldLabel: 'Email',
+			        		   fieldLabel: "<?__('Email')?>",
 			        		   anchor: '100%',
 			        		   value: companyData.Email
 			        	   })

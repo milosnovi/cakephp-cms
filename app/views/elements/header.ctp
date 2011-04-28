@@ -30,7 +30,7 @@
 					</div>
 					<div class="search_button">
 						<input type="submit" class="button" value="Search">
-					</div>
+					</div> 
 				</form>
 			</div>
 			<div class="bottom"></div>
