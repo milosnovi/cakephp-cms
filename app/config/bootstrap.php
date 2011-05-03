@@ -51,3 +51,4 @@
 
 require_once (CONFIGS . 'config.php');
 require_once(CONFIGS . 'common_functions.php');
+?>

@@ -3,7 +3,7 @@
 		var $uses = array('Page', 'Menuitem');
 	
 		public function home() {
-			$this->set('title_for_layout', 'Inkoplan d.o.o.');
+			$this->set('title_for_layout', 'ADR - polaganje ispita i izdavanje sertifikata');
 			$this->set('active_main_menuitem', 3);
 			
 			$pageData = $this->Page->find('first', array(
@@ -191,5 +191,19 @@
 			
 			$pageData = $this->Page->find('first', array('conditions' => array(Page::Id => $pageId)));
 			return $pageData;
+		}
+		
+		public function test_search() {
+			//SELECT `Page`.`id`, `Page`.`title`, `Page`.`content`, `Page`.`created`, `Page`.`modified` FROM `pages` AS `Page`   WHERE `Page`.`content` LIKE %osnovan%
+			$search_result = $this->Page->find('all', array(
+				'conditions' => array(
+					Page::T_Content. " LIKE '%opasne materije%'"
+				)
+			));
+			$matches = array();
+			preg_match('/opasne materije./i', $search_result[0][PAGE][Page::Content], $matches);
+			debug($matches);
+			debug($search_result);
+			debug(strpos($search_result[0][PAGE][Page::Content], 'osnovan'));
 		}
 	}

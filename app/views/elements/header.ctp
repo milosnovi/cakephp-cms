@@ -24,12 +24,12 @@
 		<div class="searchbox">
 			<h2>Search</h2>
 			<div class="content">
-				<form action="" method="post">
+				<form action="/inkoplan/search" method="post">
 					<div class="search_input">
 						<input type="text" class="text search-string" id="SearchBoxTxt" name="data[Site][SearchTxt]">
 					</div>
 					<div class="search_button">
-						<input type="submit" class="button" value="Search">
+						<input type="submit" class="button" value="Pretraga">
 					</div> 
 				</form>
 			</div>
