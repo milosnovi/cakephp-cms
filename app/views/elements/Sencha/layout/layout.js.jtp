@@ -41,25 +41,7 @@ CP.Layout = function() {
 										iconCls: 'pages-delete',
 										disabled: true,
 										handler: function() {
-											var selectedNode = Ext.getCmp('Navigation.MenuTree').getSelectionModel().getSelectedNode();
-											if (selectedNode) { 
-												Ext.MessageBox.confirm('Confirmation dialog', "<?__('Are you sure want to delete this menuitem?')?>", function(buttonId) {
-													if (buttonId && ('yes' == buttonId)) {
-														Ext.Ajax.request({
-										    				url: '/inkoplan/admin/menuitems/delete_node/' + selectedNode.attributes.id,
-										    				msgBoxTitle: "<?__('Deleting menuitem')?>",
-										    				success: function(response, options) {
-																if (response.json.success) {
-																	Ext.getCmp('Navigation.MenuTree').getRootNode().reload();
-																	/*var rootNode = Ext.getCmp('Navigation.MenuTree').root;
-																	Ext.getCmp('Navigation.MenuTree').loader.load(rootNode);*/
-																}
-										    				}
-										    			});
-													}
-													
-												});
-											}
+											CP.Pages.deleteMenuitem();
 										}
 								}],
 								items: [

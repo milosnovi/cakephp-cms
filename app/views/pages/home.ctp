@@ -90,15 +90,15 @@
 		</div>			
 			<div class="top-blocks">
 				<div class="block">
-					<h2><a title="ADR" href="" style="text-decoration: none;color:#1F6FA6;"><?__('ADR', true)?></a></h2>
+					<h2><a title="ADR" href="" style="text-decoration: none;color:#1F6FA6;"><?__('ADR')?></a></h2>
 					<p style='height: 130px'><?=$adr_info[PAGE][Page::Content]?></p>
-					<a href="/inkoplan/pages/view/<?=$adr_info[PAGE][ID]?>"><? __('Read more', true)?></a>
+					<a href="/inkoplan/pages/view/<?=$adr_info[PAGE][ID]?>"><? __('Read more')?></a>
 				</div>
 				
 				<div class="block">
-					<h2><a title="Procena rizika" href="" style="text-decoration: none;color:#1F6FA6;"><?__('Procena rizika', true)?></a></h2> 
+					<h2><a title="Procena rizika" href="" style="text-decoration: none;color:#1F6FA6;"><?__('Procena rizika')?></a></h2> 
 					<p style='height: 130px'><?=$procena_rizika[PAGE][Page::Content]?></p>
-					<a href="/inkoplan/pages/view/<?=$procena_rizika[PAGE][ID]?>"><? __('Read more', true)?></a>
+					<a href="/inkoplan/pages/view/<?=$procena_rizika[PAGE][ID]?>"><? __('Read more')?></a>
 				</div>
 			</div>
 		</div>

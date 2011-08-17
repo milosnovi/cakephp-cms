@@ -6,7 +6,8 @@ CP.loadOverrides = function() {
 	// START BLOCK AJAX Handler interceptor
 	Ext.Ajax.addListener('beforerequest', function(connection, options) {
 		var customParamValue = '';
-		if ('undefined' != typeof(options)) {
+		if ('undefined' != typeof(options.scope) && 'undefined' != typeof(options.scope.options)) {
+			options = options.scope.options;
 			if ('undefined' != typeof(options['msgBoxTitle'])) {
 				// For Ext.Ajax.option()
 				customParamValue = options['msgBoxTitle'];
@@ -29,9 +30,32 @@ CP.loadOverrides = function() {
 			if (('undefined' != typeof(options.getAllResponseHeaders)) /*&& (options.getAllResponseHeaders.match('text/javascript'))*/) {
 				options.json = (options && options.responseText) ? Ext.decode(options.responseText) : null;
 				
-				Ext.MessageBox.updateProgress(1);
-				setTimeout('Ext.MessageBox.hide()', 1000);
-				
+				if (('undefined' != typeof(options.json.message)) && options.json.message) {
+					var success = options.json.success;
+					var msgBoxTitle = success ? "<?__('Info')?>" : "<?__('Error')?>";
+					if (success) {
+						Ext.MessageBox.progress(msgBoxTitle, 'page successfully saved');
+						Ext.MessageBox.updateProgress(1);
+						setTimeout('Ext.MessageBox.hide()', 1000);
+					} else {
+						var message = '';
+						for (var i in options.json.message){
+							message += options.json.message[i];
+						}
+						Ext.MessageBox.show({
+							title: msgBoxTitle, 
+							msg: message, 
+							buttons: Ext.MessageBox.OK, 
+							icon: Ext.MessageBox.ERROR
+						});
+					}
+				} else {
+					if (response && response.url) {
+						Ext.MessageBox.updateProgress(1);
+						setTimeout('Ext.MessageBox.hide()', 1000);
+						//Ext.MessageBox.hide();
+					}
+				}
 				/*Common.showMessage(options.json, response);
 				showMessage: function(json, response) {
 					if (('undefined' != typeof(json.message)) && json.message) {

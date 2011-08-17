@@ -50,80 +50,14 @@ CP.Pages = function() {
 		            listeners: {
 		                itemclick: function(item) {
 		                	var editNodeData = item.parentMenu.contextNode.attributes;
-		                	console.log(editNodeData);
 		                    switch (item.id) {
 		                        case 'rename-item': {
-		                        	var windowRenameNewPage = new Ext.Window({
-		                				id: 'Pages.Window.RenameNewPage',
-		                				title: "<?__('Edit page')?>",
-		                				width: 400,
-		                				autoHeight: true,
-		                				modal: true,
-		                				plain: true,
-		                				resizable: false,
-		                				buttonAlign: 'center',
-		                				constrainHeader: true,
-		                				items: [
-		                					new Ext.form.FormPanel({
-				        	        			id: 'RenamePageFormDashboard',
-				        	        			autoHeight: true,
-				        	        			border: true,
-		//		        			        	baseCls: 'x-plain',
-				        			        	items: [
-													new Ext.form.FieldSet({
-														border: false,
-														labelWidth: 100,
-														bodyStyle: 'padding: 5px',
-														items: [{
-																xtype: 'hidden',
-																value: editNodeData.id,
-													    		name: '<?=MF2D(Menuitem::Id)?>'
-															},
-																new Ext.form.TextField({
-																	fieldLabel: "<?__('Page name')?>",
-																	anchor: '95%',
-																	value: editNodeData.menuitem_title,
-														    		name: '<?=MF2D(Menuitem::T_Title)?>'
-																})
-														   ]
-														})
-				        		    	        ],
-				        	        			buttons: [{
-				        							id: 'RenamePageFormDashboard.EditPageForm.Save',
-				        							text: "<?__('Save')?>",
-				        							handler: function () {
-				        				        		Ext.getCmp('RenamePageFormDashboard').getForm().submit({
-				        									url: '/inkoplan/admin/menuitems/rename_page/',
-				        									msgBoxTitle: "<?__('Creating page')?>",
-				        									success: function(form, action) {
-				        						    			if (action.result.success) {
-				        						    				Ext.getCmp('Navigation.MenuTree').getRootNode().reload();
-				        						    				if ('CUSTOM' != action.result.<?=PAGE?>.<?=Menuitem::T_ContentType?>) {
-				        						    					CP.Pages.showEditPageForm(action.result.<?=PAGE?>);
-				        						    				}
-				        						    				windowRenameNewPage.close();
-				        						    			}
-				        									}
-				        								});
-				        			        		}
-			        							},{
-			        								id: 'PagesDashboard.EditPageForm.Close',
-				        							text: "<?__('Close')?>",
-				        							handler: function () {
-				        								windowRenameNewPage.close();
-				        			        		}
-			        							}]
-		                					})
-	                					]
-		                        	});
-		                        	windowRenameNewPage.show();
+		                        	CP.Pages.changeMenuitemTitle(editNodeData);
 		                            break;
 		                        }
 		                        case 'delete-item': {
-		                        	var n = item.parentMenu.contextNode;
-		                            if (n.parentNode) {
-		                                n.remove();
-		                            }
+		                        	CP.Pages.deleteMenuitem();
+		                        	break;
 		                        }
 		                    }
 		                }
@@ -196,12 +130,16 @@ CP.Pages = function() {
 		        		Ext.getCmp('toolbar.buttondeleteMenuitem').enable();
 		        		if (!node.attributes.rootMenu) {
 			        		if ('CUSTOM' == node.attributes.content_type) {
-		        				Ext.MessageBox.show({
+		        				/*Ext.MessageBox.show({
 		        					title: "<?__('Warning message')?>",
 		        					msg: 'This page can\'t be edited. Please contact administrator for further information!',
 		        					buttons: Ext.MessageBox.OK,
 		        					icon: Ext.MessageBox.WARNING
-		        				});
+		        				});*/
+			        			CP.Pages.changeMenuitemTitle({
+			        				menuitem_title: node.attributes.menuitem_title,
+		        					id: node.attributes.id
+			        			});
 			        		} else {
 			        			CP.Pages.openCenterPanel(node.attributes.content_id);
 			        		}
@@ -213,12 +151,105 @@ CP.Pages = function() {
 		                node.select();
 		                var c = node.getOwnerTree().contextMenu;
 		                c.contextNode = node;
-		                c.showAt(e.getXY());
+		                
+	                	if (!Ext.isEmpty(node.attributes.orphan_page) || ('CUSTOM' == node.attributes.content_type)) {
+		                	Ext.getCmp('delete-item').disable();
+		                } else {
+		                	Ext.getCmp('delete-item').enable();
+		                }
+	                	console.log(node.attributes.content_type);
+	                	if ('ROOT' != node.attributes.content_type) {
+	                		c.showAt(e.getXY());
+	                	}
 	            	}
 		        }
 		    });
 		},
+		changeMenuitemTitle: function(nodeData) {
+			var submitAction = function () {
+				Ext.getCmp('RenamePageFormDashboard').getForm().submit({
+					url: '/inkoplan/admin/menuitems/rename_page/',
+					msgBoxTitle: "<?__('Edit menuitem title')?>",
+					success: function(form, action) {
+		    			if (action.result.success) {
+		    				Ext.getCmp('Navigation.MenuTree').getRootNode().reload();
+		    				if ('CUSTOM' != action.result.<?=PAGE?>.<?=Menuitem::T_ContentType?>) {
+		    					CP.Pages.showEditPageForm(action.result.<?=PAGE?>);
+		    				}
+		    				windowRenameNewPage.close();
+		    			}
+					}
+				});
+			};
+			
+			var windowRenameNewPage = new Ext.Window({
+				id: 'Pages.Window.RenameNewPage',
+				title: "<?__('Edit menuitem title')?>",
+				width: 400,
+				autoHeight: true,
+				modal: true,
+				plain: true,
+				resizable: false,
+				buttonAlign: 'center',
+				constrainHeader: true,
+				items: [
+					new Ext.form.FormPanel({
+	        			id: 'RenamePageFormDashboard',
+	        			autoHeight: true,
+	        			border: true,
+    					baseCls: 'x-plain',
+    					keys: [{
+    						key: Ext.EventObject.ENTER,
+    					    fn: submitAction
+    					}],
+			        	items: [
+							new Ext.form.FieldSet({
+								border: false,
+								labelWidth: 100,
+								bodyStyle: 'padding: 5px',
+								items: [{
+										xtype: 'hidden',
+										value: nodeData.id,
+							    		name: '<?=MF2D(Menuitem::Id)?>'
+									},
+										new Ext.form.TextField({
+											fieldLabel: "<?__('Menuitem title')?>",
+											anchor: '95%',
+											value: nodeData.menuitem_title,
+								    		name: '<?=MF2D(Menuitem::T_Title)?>'
+										})
+								   ]
+								})
+		    	        ]
+					})
+				],
+				buttons: [{
+					id: 'RenamePageFormDashboard.EditPageForm.Save',
+					text: "<?__('Save')?>",
+					handler: submitAction
+				},{
+					id: 'PagesDashboard.EditPageForm.Close',
+					text: "<?__('Close')?>",
+					handler: function () {
+						windowRenameNewPage.close();
+	        		}
+				}]
+        	});
+        	windowRenameNewPage.show();
+		},
 		getDashboard: function() {
+			var submitAction = function() {
+				Ext.getCmp('AddPageFormDashboard').getForm().submit({
+					url: '/inkoplan/admin/pages/create_page/',
+					msgBoxTitle: "<?__('Creating page')?>",
+					success: function(form, action) {
+		    			if (action.result.success) {
+		    				Ext.getCmp('Navigation.MenuTree').getRootNode().reload();
+		    				CP.Pages.showEditPageForm(action.result.<?=PAGE?>);
+		    			}
+					}
+				});
+			}
 			return new Ext.Panel({
 	        	title: "<?__('Dashboard')?>",
 	        	border: true,
@@ -231,25 +262,17 @@ CP.Pages = function() {
 	        			border: true,
 	        	        title: "<?__('Create new page')?>",
 			        	width: 350,
-//			        	baseCls: 'x-plain',
+			        	keys: [{
+							key: Ext.EventObject.ENTER,
+						    fn: submitAction
+						}],
 			        	items: [
 			        	     CP.Pages.createNewPageForm()
 		    	        ],
 		    	        buttons: [{
 							id: 'PagesDashboard.AddPageForm.Save',
 							text: "<?__('Save')?>",
-							handler: function () {
-				        		Ext.getCmp('AddPageFormDashboard').getForm().submit({
-									url: '/inkoplan/admin/pages/create_page/',
-									msgBoxTitle: "<?__('Creating page')?>",
-									success: function(form, action) {
-						    			if (action.result.success) {
-						    				Ext.getCmp('Navigation.MenuTree').getRootNode().reload();
-						    				CP.Pages.showEditPageForm(action.result.<?=PAGE?>);
-						    			}
-									}
-								});
-			        		}
+							handler: submitAction
 						}]
 	        		})
 	        	]	
@@ -294,6 +317,19 @@ CP.Pages = function() {
 		    });
 		},
 		createNewPageWindow: function() {
+			var submitAction = function() {
+				Ext.getCmp('Menuitems.addNewpage').getForm().submit({
+					url: '/inkoplan/admin/pages/create_page/',
+					msgBoxTitle: "<?__('Creating page')?>",
+					success: function(form, action) {
+		    			if (action.result.success) {
+		    				windowCreateNewPage.close();
+		    				Ext.getCmp('Navigation.MenuTree').getRootNode().reload();
+		    				CP.Pages.showEditPageForm(action.result.<?=PAGE?>);
+		    			}
+					}
+				});
+			};
 			var windowCreateNewPage = new Ext.Window({
 				id: 'Pages.Window.CreateNewPage',
 				title: "<?__('Add page')?>",
@@ -304,31 +340,25 @@ CP.Pages = function() {
 				resizable: false,
 				buttonAlign: 'center',
 				constrainHeader: true,
-				items:
+				items:[
 					new Ext.form.FormPanel({
 						id: 'Menuitems.addNewpage',
 						autoHeight: true,
 						border: false,
+						baseCls: 'x-plain',
+						keys: [{
+							key: Ext.EventObject.ENTER,
+						    fn: submitAction
+						}],
 						items:[
 					      CP.Pages.createNewPageForm()
 				       ]
 					})
-			    ,buttons: [{
+				],
+				buttons: [{
 					id: 'Pages.formPage.AddPageForm.Save',
 					text: "<?__('Save')?>",
-					handler: function () {
-		        		Ext.getCmp('Menuitems.addNewpage').getForm().submit({
-							url: '/inkoplan/admin/pages/create_page/',
-							msgBoxTitle: "<?__('Creating page')?>",
-							success: function(form, action) {
-				    			if (action.result.success) {
-				    				windowCreateNewPage.close();
-				    				Ext.getCmp('Navigation.MenuTree').getRootNode().reload();
-				    				CP.Pages.showEditPageForm(action.result.<?=PAGE?>);
-				    			}
-							}
-						});
-	        		}
+					handler: submitAction
 				},{	
 					text: 'Close',
 					handler: function() {
@@ -337,6 +367,25 @@ CP.Pages = function() {
 				}]
 			});
 			return windowCreateNewPage;
+		},
+		deleteMenuitem: function() {
+			var selectedNode = Ext.getCmp('Navigation.MenuTree').getSelectionModel().getSelectedNode();
+			if (selectedNode) { 
+				Ext.MessageBox.confirm('Confirmation dialog', "<?__('Are you sure want to delete this menuitem?')?>", function(buttonId) {
+					if (buttonId && ('yes' == buttonId)) {
+						Ext.Ajax.request({
+		    				url: '/inkoplan/admin/menuitems/delete_node/' + selectedNode.attributes.id,
+		    				msgBoxTitle: "<?__('Deleting menuitem')?>",
+		    				success: function(response, options) {
+								if (response.json.success) {
+									Ext.getCmp('Navigation.MenuTree').getRootNode().reload();
+								}
+		    				}
+		    			});
+					}
+					
+				});
+			}
 		},
 		openCenterPanel: function(pageId) {
 			if (Ext.isEmpty(pageId)) {
@@ -359,11 +408,25 @@ CP.Pages = function() {
 //					CKEDITOR.instances['inputTextarea'].destroy();
 				}
 				
+				var submitAction  = function () {
+					Ext.getCmp('inputTextarea').setValue(CKEDITOR.instances.inputTextarea.getData());
+					Ext.getCmp('Pages.formPage').getForm().submit({
+						url: '/inkoplan/admin/pages/form',
+						msgBoxTitle: "<?__('Saving page')?>",
+						success: function(form, action) {
+							Ext.getCmp('Navigation.MenuTree').getRootNode().reload();
+						}
+					});
+				};
+				
 		        var pagesContent = new Ext.Panel({
 		        	id: 'Pages.MainCenterPanel',
 		        	border: true,
-//					autoScroll: false,
 		        	autoHeight: true,
+		        	keys: [{
+						key: Ext.EventObject.ENTER,
+					    fn: submitAction
+					}],
 		        	title: pageData.<?=Page::T_Title?>,
 		        	tbar: [{
 	        			xtype: 'tbbutton',
@@ -372,7 +435,6 @@ CP.Pages = function() {
 	    	            handler: function() {
 		        			var selectionNode = Ext.getCmp('Navigation.MenuTree').getSelectionModel().getSelectedNode().attributes;
 		        			Ext.Ajax.request({
-//		        				url: '/inkoplan/admin/pages/delete_page/' + pageData.<?=Page::Id?>,
 	    	    				url: '/inkoplan/admin/pages/delete_page/' + Ext.getCmp('Pages.formPage.panelContent.pageId').getValue(),
 	    	    				msgBoxTitle: "<?__('Deleting page')?>",
 	    	    				success: function(response, options) {
@@ -412,7 +474,6 @@ CP.Pages = function() {
 								},
 								new Ext.form.FieldSet({
 									border: false,
-//									autoScroll: true,
 									width: 735,
 									items:[
 						        	   new Ext.form.TextField({
@@ -434,7 +495,7 @@ CP.Pages = function() {
 														filebrowserImageBrowseUrl : '/inkoplan/js/ckfinder/ckfinder.html?type=Images',
 														filebrowserUploadUrl : '/inkoplan/js/ckfinder/core/connector/php/connector.php?command=QuickUpload&type=Files&currentFolder=/inkoplan/app/webroot/img/admin/',
 														filebrowserImageUploadUrl : '/inkoplan/js/ckfinder/core/connector/php/connector.php?command=QuickUpload&type=Images&currentFolder=/inkoplan/app/webroot/img/',
-														height: 400,
+														height: 200,
 						        						toolbar: [ 
 				        						           ['NewPage','Preview'],
 					        						           ['Cut','Copy','Paste','PasteText','PasteFromWord','-','Scayt'],
@@ -458,16 +519,7 @@ CP.Pages = function() {
 								buttons: [{
 									id: 'Pages.formPage.panelContent.buttonSaveAndPublish',
 									text: 'Save',
-									handler: function () {
-										Ext.getCmp('inputTextarea').setValue(CKEDITOR.instances.inputTextarea.getData());
-										Ext.getCmp('Pages.formPage').getForm().submit({
-											url: '/inkoplan/admin/pages/form',
-											msgBoxTitle: "<?__('Saving page')?>",
-											success: function(form, action) {
-												
-											}
-										});
-									}
+									handler: submitAction
 								},{
 									text: 'Close',
 									handler: function() {
@@ -486,7 +538,6 @@ CP.Pages = function() {
 				Ext.getCmp('Pages.formPage.panelContent.pageId').setValue(pageData.<?=Page::Id?>);
 				Ext.getCmp('Pages.MainCenterPanel').setTitle(pageData.<?=Page::T_Title?>);
 			}
-	        
 		}
 	}
 }();

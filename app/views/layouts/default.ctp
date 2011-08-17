@@ -5,6 +5,9 @@
 		<meta content="ADR, opasne materije, sertifikat, ispit, Procena rizika" name="keywords">
 		<meta content="Polaganje ispita i izdavanje ADR sertifikata. Cara Dušana 18000 Niš, tel: 063/774 10 40" name="description">
 		
+		<?if (isset($metaCanonicalSlug)):?>
+			<link rel="canonical" href=<?="http://www.inkoplan.rs/$metaCanonicalSlug"?> />
+		<?php endif;?>
 		<title><?= $title_for_layout ?></title>
 		<?= $this->Html->css('default', null, array('media' => 'screen')) ?>
 		<?= $this->Html->css('inkoplan', null, array('media' => 'screen')) ?>
@@ -13,8 +16,8 @@
 		
 		<?//$scripts_for_layout;?>
 	</head>
+	
  	<body class="bodyLayout">
- 		<div style="border:1px solid red; color: red; font-size: 35px; text-align: center; margin: 10px 0;">This site is still under construction</div>
 		<?= $this->element('header') ?>
 		<div id="content">
 			<?//= $this->element('session_messages') ?>

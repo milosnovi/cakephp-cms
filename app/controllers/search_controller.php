@@ -20,7 +20,7 @@ class SearchController extends AppController {
 				$modelPage = new Page();
 				$search_result = $modelPage->find('all', array(
 					'conditions' => array(
-						Page::T_Content. " LIKE '%$search_term%'"
+						Page::T_Content. " LIKE '% $search_term%'"
 					)
 				));
 				$finalSearchArray = array();

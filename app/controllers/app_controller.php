@@ -6,10 +6,33 @@
 		var $components = array('Session', 'RequestHandler', 'Cookie', 'Email');
 		
 		function beforeFilter() {
-			/*if (isAdminDomain() && !empty($this->params['isAjax']) && !$this->Session->read('siteadmin')) {
-				$this->redirect('/admin/siteadmins/login', 401);
-				exit();
-			}*/
+			/*
+			 *Znaci da slug za dati url ne postoji.  
+			 *Probaj da za kombinaciju kontroler+akcija+id najdes main slug i ako postoji redirektuj na tu adresu
+			 * */
+			if (empty($this->params[SLUG])) {
+				$controller = $this->name;
+				$action = empty($this->params['action']) ? false : $this->params['action'];
+				$pass = empty($this->params['pass']) ? false : $this->params['pass'];
+				if ($controller && $action) {
+					$fk = (is_array($pass) && (0 < count($pass))) ? array_shift($pass) : null;
+
+					$matchedSlug = Slug::getSlugsPerRawUrl($controller, $action, $fk);
+					if ($matchedSlug) {
+						// First array value is empty because of starting slash. Cleaned $pass from empty params
+						$this->redirect301(Slug::parseSlugUrl($matchedSlug[SLUG][Slug::Url]));
+					}
+				}
+			} else {
+				/*
+			 	* Nadjen je slug u tabeli za dati url
+			 	* ako je canonical setuj parametar za metacanonical tagove
+			 	*/
+				if (Slug::TypeCanonical == $this->params[SLUG][Slug::Type]) {
+					$url = Slug::parseSlugUrl($this->params[Slug::F_MainSlug][Slug::Url]);
+					$this->set('metaCanonicalSlug', $url);
+				}
+			}
 		}
 		
 		function beforeRender() {
@@ -43,6 +66,10 @@
 			$arrXml = objectsIntoArray($xmlObj);
 			$this->set('company_data', $arrXml); 
 			
+		}
+		
+		public function redirect301($url) {
+			$this->redirect("/$url", 301);
 		}
 		
 		 public function returnJsonData($data) {

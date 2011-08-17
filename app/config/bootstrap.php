@@ -48,7 +48,10 @@
  * Inflector::rules('plural', array('rules' => array(), 'irregular' => array(), 'uninflected' => array()));
  *
  */
+require_once 'cake/libs/model/model.php';
+require_once 'cake/libs/model/app_model.php';
 
 require_once (CONFIGS . 'config.php');
 require_once(CONFIGS . 'common_functions.php');
+require_once(MODELS . 'slug.php');
 ?>

@@ -1,6 +1,6 @@
 <?php
 	class PagesController extends AppController {
-		var $uses = array('Page', 'Menuitem');
+		var $uses = array(PAGE, MENUITEM, SLUG);
 	
 		public function home() {
 			$this->set('title_for_layout', 'ADR - polaganje ispita i izdavanje sertifikata');
@@ -19,7 +19,7 @@
 			
 			$page2 = $this->Page->find('first', array(
 				'conditions' => array(
-					Page::Id => 4
+					Page::Id => 16
 				)
 			));
 //			$page2[PAGE][Page::Content] = htmlentities(preg_replace($html_reg, '', mb_substr($page2[PAGE][Page::Content], 0, 800)), ENT_COMPAT, 'UTF-8');
@@ -71,14 +71,13 @@
 					'success' => false,
 					'message' => __('Missing data')
 				));
-				
 			}
 			
 			$success = $this->Page->save($this->data[PAGE]);
-
-			if (isset($this->data[MENUITEM][Menuitem::A_MainMenu])) {
+			$success &= $this->Slug->setSlug(PAGE, $this->Page->id, $this->data[PAGE][Page::Title]);
+			
+			if ($success && isset($this->data[MENUITEM][Menuitem::A_MainMenu])) {
 				$isMainMenu = $this->data[MENUITEM][Menuitem::A_MainMenu];
-				
 				$data[MENUITEM] = array(
 					Menuitem::ParantId => $isMainMenu ? 1 : 2,
 					Menuitem::Title => $this->data[PAGE][Page::Title],
@@ -96,12 +95,13 @@
 				$pageData = $this->__getPageData($this->Page->id);
 				$this->returnJsonData(array(
 					'success' => true,
+					'message' => 'Page is succesfully created',
 					PAGE => $pageData
 				));
 			} else {
 				$this->returnJsonData(array(
 					'success' => false,
-					'message' => __('ERROR ERROR!!!!!')
+					'message' => $this->Page->validationErrors
 				));
 			}
 		}
@@ -163,19 +163,52 @@
 		}
 		
 		public function admin_form($id = null) {
+			$success = true;
+			$returnData = array();
 			if (RequestHandlerComponent::isPost()) {
-				$this->Page->id = $this->data[PAGE][ID];
-				$this->Page->save(array(
+				$id = $this->data[PAGE][ID];
+				$this->Page->bindModel(array(
+					'hasOne' => array(
+						MENUITEM => array(
+							'className' => MENUITEM,
+							'foreignKey' => Menuitem::ContentId,
+							'conditions' => array(Menuitem::ContentType => PAGE)
+						)
+					)
+				));
+				$pageData = $this->Page->find('first', array(
+					'conditions' => array(
+						Page::Id => $id,
+						Menuitem::T_ContentId => $id 
+					)
+				));
+				$menuitemTitleIsSync = isset($pageData[MENUITEM][Menuitem::Title]) && ($pageData[MENUITEM][Menuitem::Title] == $pageData[PAGE][Page::Title]);
+				$pageTitleIsChanged =  $this->data[PAGE][Page::Title] != $pageData[PAGE][Page::Title];
+				
+				$this->Page->id = $id;
+				$success = $this->Page->save(array(
 					Page::Content => $this->data[PAGE][Page::Content],
 					Page::Title => $this->data[PAGE][Page::Title]
 				));
-				$id = $this->Page->id;
+				
+				if ($pageTitleIsChanged && $success) {
+					// kreiraj novi slug, stari na 301
+					if ($menuitemTitleIsSync) {
+						$this->Menuitem->id = $pageData[MENUITEM][ID];
+						$success = $this->Menuitem->save(array(Menuitem::Title => $this->data[PAGE][Page::Title]));
+					}
+				}
+				
+				$returnData = array(
+					'success' => $success ? true : false,
+					'message' => $success ? 'Page successfully saved' : $this->Page->validationErrors
+				);
 			}
+			
 			$pageData = $this->__getPageData($id);
-			$this->returnJsonData(array(
-				'success' => true,
+			$this->returnJsonData(am($returnData, array(
 				PAGE => $pageData['Page']
-			));
+			)));
 		}
 		
 		private function __getPageData($pageId) {

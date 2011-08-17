@@ -10,7 +10,7 @@ class MenuitemsController extends AppController {
 		$mainMenu = $this->Menuitem->generateExtMenuitems(1, Menuitem::TypeMain);
 		$finalArray[] = array(
 			'id' => 1,
-		'menu_type' => Menuitem::TypeMain,
+			'menu_type' => Menuitem::TypeMain,
 			'text' => 'Main menu',
 			'rootMenu' => true,
 			'content_type' => 'ROOT',
@@ -171,6 +171,7 @@ class MenuitemsController extends AppController {
 		$pageData = $this->Menuitem->find('first', array('conditions' => array(Menuitem::Id => $this->Menuitem->id)));
 		$this->returnJsonData(array(
 			'success' => true,
+			'message' => 'Page is succesfully edited',
 			PAGE => $pageData 
 		));
 	}

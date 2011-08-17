@@ -27,7 +27,30 @@
  * to use (in this case, /app/views/pages/home.ctp)...
  */
 
+	$url = $this->getUrl();
+	$pathChunks = explode('/', $url);
 
+	if (!empty($pathChunks) && ($pathChunks[0] != 'admin')) {
+		$slug = Slug::getSlugPerUrl($url);
+		if ($slug) {
+			$slugType = $slug[SLUG][Slug::Type];
+			if (Slug::Type301 == $slugType) {
+				$redirectUrl = Slug::parseSlugUrl($slug[Slug::F_MainSlug][Slug::Url]);
+				Router::connect("/$url", array(
+					'controller' => 'app',
+					'action' => 'redirect301',
+					$redirectUrl
+				));
+			} else {
+				Router::connect("/$url", am(array(
+					'controller' => $slug[SLUG][Slug::Controller],
+					'action' => $slug[SLUG][Slug::Action],
+					$slug[SLUG][Slug::Fk]
+				), $slug));
+			}
+		}
+	}
+	
 	Router::connect('/', array('controller' => 'pages', 'action' => 'home', 'home'));
 	Router::connect('/contact', array('controller' => 'pages', 'action' => 'contact'));
 	Router::connect('/search/*', array('controller' => 'search', 'action' => 'index'));

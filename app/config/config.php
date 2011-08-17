@@ -6,4 +6,5 @@
 	define('PAGE', 'Page');
 	define('MENUITEM', 'Menuitem');
 	define('SITEADMIN', 'Siteadmin');
+	define('SLUG', 'Slug');
 ?>
