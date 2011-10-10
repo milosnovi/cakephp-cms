@@ -13,12 +13,12 @@ class Page extends AppModel {
 			array(
 				'rule' => 'notEmpty',
 				'message' => 'Page title can not be empty'
-			),
-			'siteUnique' => array(
+			)
+			/*'siteUnique' => array(
 				'rule' => 'checkSiteUniqness',
 				'field' => self::Title,
 				'message' => 'Same value has already existed. Please try again'
-			),
+			)*/
 		)
 	);
 	

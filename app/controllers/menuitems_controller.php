@@ -7,9 +7,10 @@ class MenuitemsController extends AppController {
 		$success = $this->Menuitem->delete();
 		
 */		$finalArray = array();
-		$mainMenu = $this->Menuitem->generateExtMenuitems(1, Menuitem::TypeMain);
+		$mainMenuRootId = $this->Menuitem->getRootNodeId(Menuitem::TypeMain);
+		$mainMenu = $this->Menuitem->generateExtMenuitems($mainMenuRootId, Menuitem::TypeMain);
 		$finalArray[] = array(
-			'id' => 1,
+			'id' => $mainMenuRootId,
 			'menu_type' => Menuitem::TypeMain,
 			'text' => 'Main menu',
 			'rootMenu' => true,
@@ -20,10 +21,11 @@ class MenuitemsController extends AppController {
 			'children' => $mainMenu 
 		);
 		
-		$sideMenuitems = $this->Menuitem->generateExtMenuitems(2, Menuitem::TypeSide);
+		$sideMenuRootId = $this->Menuitem->getRootNodeId(Menuitem::TypeSide);
+		$sideMenuitems = $this->Menuitem->generateExtMenuitems($sideMenuRootId, Menuitem::TypeSide);
 
 		$finalArray[] = array(
-			'id' => 6,
+			'id' => $sideMenuRootId,
 			'menu_type' => Menuitem::TypeSide, 
 			'text' => 'Side menu',
 			'rootMenu' => true,
@@ -44,7 +46,6 @@ class MenuitemsController extends AppController {
 			'expanded' => true,
 			'children' => $this->Page->getOrphanPages() 
 		);
-		
 		$this->returnJsonData($finalArray);
 	}
 	
@@ -176,11 +177,3 @@ class MenuitemsController extends AppController {
 		));
 	}
 }
-
-
-
-
-
-
-
-

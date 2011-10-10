@@ -17,11 +17,7 @@
 			$pageData[PAGE][Page::Content] = sprintf('%s...', $pageContent);
 			$this->set('adr_info', $pageData);
 			
-			$page2 = $this->Page->find('first', array(
-				'conditions' => array(
-					Page::Id => 16
-				)
-			));
+			$page2 = $this->Page->find('first', array('conditions' => array(Page::Id => 2)));
 //			$page2[PAGE][Page::Content] = htmlentities(preg_replace($html_reg, '', mb_substr($page2[PAGE][Page::Content], 0, 800)), ENT_COMPAT, 'UTF-8');
 			$pageContent = substr(strip_tags($page2[PAGE][Page::Content]), 0, 700);
 			$page2[PAGE][Page::Content] = sprintf('%s...', $pageContent);
@@ -51,7 +47,7 @@
 				'conditions' => array(Menuitem::T_ContentId => $pageId)
 				)
 			);
-			$menuitemIds = Set::extract($menuitems, '{n}.'. MENUITEM . '.' .ID);
+			$menuitemIds = Set::extract($menuitems, '{n}.'. MENUITEM . '.' . ID);
 			if (!empty($menuitemIds)) {
 				foreach($menuitemIds as $menuitemId) {
 					$this->Menuitem->id = $menuitemId;
@@ -66,6 +62,9 @@
 		}
 		
 		public function admin_create_page() {
+			$dataSource = $this->Page->getDataSource();
+			$dataSource->begin($this->Page);
+			
 			if (!isset($this->data[PAGE][Page::Title])) {
 				$this->returnJsonData(array(
 					'success' => false,
@@ -74,12 +73,14 @@
 			}
 			
 			$success = $this->Page->save($this->data[PAGE]);
-			$success &= $this->Slug->setSlug(PAGE, $this->Page->id, $this->data[PAGE][Page::Title]);
+			if ($success) {
+				$success = $this->Slug->createSlug(PAGE, $this->Page->id, $this->data[PAGE][Page::Title]);
+			}
 			
 			if ($success && isset($this->data[MENUITEM][Menuitem::A_MainMenu])) {
 				$isMainMenu = $this->data[MENUITEM][Menuitem::A_MainMenu];
 				$data[MENUITEM] = array(
-					Menuitem::ParantId => $isMainMenu ? 1 : 2,
+					Menuitem::ParantId => ($isMainMenu ? $this->Menuitem->getRootNodeId(Menuitem::TypeMain) : $this->Menuitem->getRootNodeId(Menuitem::TypeSide)),
 					Menuitem::Title => $this->data[PAGE][Page::Title],
 					Menuitem::Type => $isMainMenu ? Menuitem::TypeMain : Menuitem::TypeSide,
 					Menuitem::ContentType => PAGE,
@@ -88,10 +89,11 @@
 					Menuitem::Url => "/pages/view/{$this->Page->id}"
 				);
 
-				$success &= $this->Menuitem->save($data[MENUITEM]);
+				$success = $this->Menuitem->save($data[MENUITEM]);
 			}
 			
 			if ($success) {
+				$dataSource->commit($this->Page);
 				$pageData = $this->__getPageData($this->Page->id);
 				$this->returnJsonData(array(
 					'success' => true,
@@ -99,9 +101,10 @@
 					PAGE => $pageData
 				));
 			} else {
+				$dataSource->rollback($this->Page);
 				$this->returnJsonData(array(
 					'success' => false,
-					'message' => $this->Page->validationErrors
+					'message' => am($this->Page->validationErrors, $this->Slug->validationErrors) 
 				));
 			}
 		}
@@ -173,26 +176,39 @@
 							'className' => MENUITEM,
 							'foreignKey' => Menuitem::ContentId,
 							'conditions' => array(Menuitem::ContentType => PAGE)
+						),
+						SLUG => array(
+							'classname' => SLUG,
+							'foreignKey' => Slug::Fk,
+							'conditions' => array(
+								Slug::T_Type => Slug::TypeMain,
+								Slug::T_Controller => 'pages',
+								Slug::T_Action => 'view'
+							)
 						)
 					)
 				));
+				
 				$pageData = $this->Page->find('first', array(
 					'conditions' => array(
 						Page::Id => $id,
 						Menuitem::T_ContentId => $id 
 					)
 				));
+				
 				$menuitemTitleIsSync = isset($pageData[MENUITEM][Menuitem::Title]) && ($pageData[MENUITEM][Menuitem::Title] == $pageData[PAGE][Page::Title]);
-				$pageTitleIsChanged =  $this->data[PAGE][Page::Title] != $pageData[PAGE][Page::Title];
+				$pageNameIsChanged =  $this->data[PAGE][Page::Title] != $pageData[PAGE][Page::Title];
+				$pageSlugIsChanged = $pageData[SLUG][Slug::Url] != 'pages/'.Slug::createSlugUrl($this->data[SLUG][Slug::Url]).'/%';
 				
 				$this->Page->id = $id;
-				$success = $this->Page->save(array(
-					Page::Content => $this->data[PAGE][Page::Content],
-					Page::Title => $this->data[PAGE][Page::Title]
-				));
+				$success = $this->Page->save($this->data[PAGE]);
+
+				if ($success && ($pageNameIsChanged || $pageSlugIsChanged)) {
+					$newUrl = $pageNameIsChanged ? $this->data[PAGE][Page::Title] : $this->data[SLUG][Slug::Url];
+					$success = $this->Slug->editSlug($this->data[SLUG][ID], $newUrl);
+				}
 				
-				if ($pageTitleIsChanged && $success) {
-					// kreiraj novi slug, stari na 301
+				if ($pageNameIsChanged && $success) {
 					if ($menuitemTitleIsSync) {
 						$this->Menuitem->id = $pageData[MENUITEM][ID];
 						$success = $this->Menuitem->save(array(Menuitem::Title => $this->data[PAGE][Page::Title]));
@@ -204,37 +220,50 @@
 					'message' => $success ? 'Page successfully saved' : $this->Page->validationErrors
 				);
 			}
-			
-			$pageData = $this->__getPageData($id);
-			$this->returnJsonData(am($returnData, array(
-				PAGE => $pageData['Page']
-			)));
+			$this->returnJsonData(am($returnData, $this->__getPageData($id)));
 		}
 		
 		private function __getPageData($pageId) {
-			$this->Menuitem->bindModel(array(
-				'belongsTo' => array(
-					'Page' => array(
-						'className' => 'Page',
+			$this->Page->bindModel(array(
+				'hasMany' => array(
+					MENUITEM => array(
+						'className' => 'Menuitem',
 						'foreignKey' => Menuitem::ContentId,
 						'conditions' => array(Menuitem::T_ContentType => 'PAGE')
+					)
+				),
+				'hasOne' => array(
+					SLUG => array(
+						'classname' => SLUG,
+						'foreignKey' => Slug::Fk,
+						'conditions' => array(
+							Slug::T_Type => Slug::TypeMain,
+							Slug::T_Controller => 'pages',
+							Slug::T_Action => 'view'
+						)
 					)
 				)
 			));
 			
-			$pageData = $this->Page->find('first', array('conditions' => array(Page::Id => $pageId)));
-			return $pageData;
+			
+			$pageData = $this->Page->find('first', array(
+				'conditions' => array(
+					Page::Id => $pageId
+				)	
+			));
+			$pageData[SLUG][Slug::Url] = Slug::parseSlugUrl($pageData[SLUG][Slug::Url]);
+			return array(
+				PAGE => $pageData[PAGE], 
+				SLUG => $pageData[SLUG] 
+			);
 		}
 		
 		public function test_search() {
-			//SELECT `Page`.`id`, `Page`.`title`, `Page`.`content`, `Page`.`created`, `Page`.`modified` FROM `pages` AS `Page`   WHERE `Page`.`content` LIKE %osnovan%
-			$search_result = $this->Page->find('all', array(
-				'conditions' => array(
-					Page::T_Content. " LIKE '%opasne materije%'"
-				)
-			));
+			$url ="pages\/milod-1";
 			$matches = array();
-			preg_match('/opasne materije./i', $search_result[0][PAGE][Page::Content], $matches);
+			preg_match("/({$url})\-([0-9]*)\/\%/", "pages/milod-1-1/%", $matches);
+			debug($matches);
+			exit();
 			debug($matches);
 			debug($search_result);
 			debug(strpos($search_result[0][PAGE][Page::Content], 'osnovan'));

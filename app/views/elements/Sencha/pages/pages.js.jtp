@@ -75,7 +75,7 @@ CP.Pages = function() {
 //		        		var dropNodeContentType = dragOverEvent.target.attributes.content_type;
 //		        		var enableDrop = 'ROOT' != dropNodeContentType;
 		        		
-						var reorderInsideOrphan = !Ext.isEmpty(dropNode.orhpan_page) && !Ext.isEmpty(targetNode.orhpan_page); 
+						var reorderInsideOrphan = !Ext.isEmpty(dropNode.orphan_page) && !Ext.isEmpty(targetNode.orphan_page); 
 						var moveToParentNode = targetNode.id == dragOverEvent.dropNode.parentNode.attributes.id;
 						var allowDrop = !reorderInsideOrphan && !moveToParentNode;
 						return allowDrop;
@@ -92,18 +92,18 @@ CP.Pages = function() {
 		        		
 		        		dropEvent.tree.draggedNode = dropNode;
 		        		dropEvent.tree.targetNode = targetNode;
-		        		
+
 						Ext.Ajax.request({
 							url: '/inkoplan/admin/menuitems/reorder_nodes',
 							params: {
 								'dropPoint':  			dropEvent.point,
 								
-								'dropMenuitemId': 		Ext.isEmpty(dropNode.attributes.orhpan_page) ? dropNode.attributes.id : null,
+								'dropMenuitemId': 		Ext.isEmpty(dropNode.attributes.orphan_page) ? dropNode.attributes.id : null,
 								'dropPageId':  			dropNode.attributes.content_id,
 								'dropMenuType': 		((dropNode.attributes.menu_type == '<?=Menuitem::TypeMain?>') || (dropNode.attributes.menu_type == '<?=Menuitem::TypeSide?>')) ? dropNode.attributes.menu_type : null,
 								'dropParentId': 		!Ext.isEmpty(dropNode.attributes.parent_id) ? dropNode.attributes.parent_id : null,
 								
-								'targetMenuitemId':  	Ext.isEmpty(targetNode.attributes.orhpan_page) ? targetNode.attributes.id : null,
+								'targetMenuitemId':  	Ext.isEmpty(targetNode.attributes.orphan_page) ? targetNode.attributes.id : null,
 								'targetPageId':  		targetNode.attributes.content_id,
 								'targetMenuType': 		((targetNode.attributes.menu_type == '<?=Menuitem::TypeMain?>') || (targetNode.attributes.menu_type == '<?=Menuitem::TypeSide?>')) ? targetNode.attributes.menu_type : null,
 								'targetParentId': 		!Ext.isEmpty(targetNode.attributes.parent_id) ? targetNode.attributes.parent_id : null
@@ -415,6 +415,7 @@ CP.Pages = function() {
 						msgBoxTitle: "<?__('Saving page')?>",
 						success: function(form, action) {
 							Ext.getCmp('Navigation.MenuTree').getRootNode().reload();
+							CP.Pages.showEditPageForm(action.result);
 						}
 					});
 				};
@@ -482,7 +483,20 @@ CP.Pages = function() {
 						        		   fieldLabel: 'Page name',
 						        		   anchor: '100%',
 						        		   value: pageData.<?=Page::T_Title?>
-						        	   }),
+						        	   }),{
+						        		   id: 'Pages.slug.id',
+						        		   xtype: 'hidden',
+						        		   value: pageData.<?=Slug::Id?>,
+						        		   name: '<?=MF2D(Slug::Id)?>'
+						        	   },
+						        	   new Ext.form.TextField({
+						        		   	id: 'Pages.slugUrl',
+						    				xtype: 'field',
+						    				fieldLabel: 'Page url',
+						    				anchor: '100%',
+						    				name: '<?=MF2D(Slug::T_Url)?>',
+						    				value: pageData.<?=Slug::T_Url?>
+						    			}),
 					        	       new Ext.form.TextArea({
 							        		id: 'inputTextarea',
 							        		name: '<?=MF2D(Page::T_Content)?>',
@@ -535,6 +549,8 @@ CP.Pages = function() {
 				textArea.setData(pageData.<?=Page::T_Content?>);
 				
 				Ext.getCmp('Pages.title').setValue(pageData.<?=Page::T_Title?>);
+				Ext.getCmp('Pages.slug.id').setValue(pageData.<?=Slug::Id?>);
+				Ext.getCmp('Pages.slugUrl').setValue(pageData.<?=Slug::T_Url?>);
 				Ext.getCmp('Pages.formPage.panelContent.pageId').setValue(pageData.<?=Page::Id?>);
 				Ext.getCmp('Pages.MainCenterPanel').setTitle(pageData.<?=Page::T_Title?>);
 			}

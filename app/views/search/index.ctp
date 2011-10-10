@@ -68,7 +68,7 @@
 			<h3><?=count($finalSearchArray)?> <?__('stranica sadrže frazu koju tražite:');?></h3>
 				<? foreach ($finalSearchArray as $result) :?>
 					<ul>
-						<li><a href="http://www.inkoplan.rs/pages/view/<?=$result[ID]?>"> <?=$result['title']?></a><br>
+						<li><a href='/inkoplan<?=$result["link"]?>'> <?=$result['title']?></a><br>
 							<span class="excerpt"><?=$result['matched_string']?>...</span>
 						</li>
 					</ul>

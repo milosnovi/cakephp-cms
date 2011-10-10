@@ -1,5 +1,6 @@
 <?php
 class Menuitem extends AppModel {
+	
 	const Id = 'Menuitem.id';
 
 	const Title = 'title';
@@ -30,6 +31,10 @@ class Menuitem extends AppModel {
 	const A_MainMenu = 'mainMenu';
 	const A_T_MainMenu = 'Menuitem.mainMenu';
 	
+	const ContentTypePage = 'PAGE';
+	const ContentTypeCustom = 'CUSTOM';
+	const ContentTypeRoot = 'ROOT';
+	
 	var $actsAs = array('Tree');
  
 	var $belongsTo = array(
@@ -40,17 +45,44 @@ class Menuitem extends AppModel {
 		)
 	);
 	
-	public function getMenuChildren($menuid) {
-		$sideMenuItems = $this->children($menuid, true);
+	public function getRootNodeId($menu_type) {
+		$pageData = $this->find('first', array(
+			'fields' => array(ID),
+			'conditions' => array(
+				self::T_ContentType => self::ContentTypeRoot,
+				self::T_Type => $menu_type
+			),
+			'recursive' => -1
+		));
+		return $pageData[MENUITEM][ID];
+	}
 	
+	public function getMenuChildren($menuid) {
+		$sideMenuItems = $this->find('all', array(
+			'fields' => array(MENUITEM.'.*', SLUG.'.*'),
+			'joins' => array(
+				array(
+					'table' => 'slugs',
+					'alias' => SLUG,
+					'type' => 'left',
+					'conditions' => array(
+						Slug::T_Type => Slug::TypeMain,
+						sprintf('%s = %s', Slug::T_Fk, self::T_ContentId),
+						Slug::T_Controller => 'pages',
+						Slug::T_Action => 'view'
+					)
+				)
+			),
+			'conditions' => array(Menuitem::ParantId => $menuid)
+		));
+		//debug($sideMenuItems);
 		$levelItems = array();
 		foreach($sideMenuItems as $index => $sideMenuItem) {
+			$sideMenuItem[MENUITEM]['slug_url'] = isset($sideMenuItem[SLUG][Slug::Url]) ? "/".Slug::parseSlugUrl($sideMenuItem[SLUG][Slug::Url]) : $sideMenuItem[MENUITEM][Menuitem::Url];
 			if (1 < ($sideMenuItem['Menuitem'][Menuitem::Rght] - $sideMenuItem['Menuitem'][Menuitem::Lft])) {
-				$levelItems[$index] = am($sideMenuItem,
-					array(Menuitem::A_Children => $this->getMenuChildren($sideMenuItem['Menuitem']['id']))
-				);
+				$levelItems[$index] = am($sideMenuItem,	array(Menuitem::A_Children => $this->getMenuChildren($sideMenuItem['Menuitem']['id'])));
 			} else {
-				$levelItems[$index] = $sideMenuItem;		
+				$levelItems[$index] = $sideMenuItem;
 			}                                               
 		}
 		return $levelItems;
