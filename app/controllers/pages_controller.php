@@ -6,11 +6,8 @@
 			$this->set('title_for_layout', 'ADR - polaganje ispita i izdavanje sertifikata');
 			$this->set('active_main_menuitem', 3);
 			
-			$pageData = $this->Page->find('first', array(
-				'conditions' => array(
-					Page::Id => 3
-				)
-			));
+			$pageData = $this->Page->find('first', array('conditions' => array(Page::Id => 3)));
+			
 			$html_reg = "/<+\s*\/*\s*([A-Z][A-Z0-9]*)\b[^>]*\/*\s*>+/i";
 			//$pageData[PAGE][Page::Content] = preg_replace($html_reg, '', mb_substr($pageData[PAGE][Page::Content], 0, 800));
 			$pageContent = substr(strip_tags($pageData[PAGE][Page::Content]), 0, 700);
@@ -41,8 +38,11 @@
 		}
 		
 		public function admin_delete_page($pageId) {
+			$dataSource = $this->Page->getDataSource();
+			$dataSource->begin($this->Page);
+			
 			$success = $this->Page->delete($pageId);
-			debug($success);
+			
 			$menuitems = $this->Menuitem->find('all', array(
 				'conditions' => array(Menuitem::T_ContentId => $pageId)
 				)
@@ -55,9 +55,17 @@
 				}
 			}
 			
+			if ($success){
+				$dataSource->commit($this->Page);
+				$message = __('Page is successfully deleted.', true);
+			} else {
+				$dataSource->rollback($this->Page);
+				$message = __('Page is not successfully deleted.', true);
+			}
+			
 			$this->returnJsonData(array(
 				'success' => $success,
-				'message' => $success ? 'super' : 'loso' 
+				'message' => $message 
 			));
 		}
 		
@@ -97,8 +105,8 @@
 				$pageData = $this->__getPageData($this->Page->id);
 				$this->returnJsonData(array(
 					'success' => true,
-					'message' => 'Page is succesfully created',
-					PAGE => $pageData
+					'message' => __('Page is succesfully created', true),
+					 PAGE => $pageData
 				));
 			} else {
 				$dataSource->rollback($this->Page);
@@ -107,6 +115,11 @@
 					'message' => am($this->Page->validationErrors, $this->Slug->validationErrors) 
 				));
 			}
+		}
+		
+		public function report_bad_link() {
+			$this->autoRender = false;
+			$this->redirect('/');
 		}
 		
 		public function contact() {
@@ -154,15 +167,30 @@
 		}
 		
 		public function view($id) {
+			$page = $this->Page->find('first', array('conditions' => array('Page.id' => $id)));
+			if (empty($page)) {
+				/*
+			 	* echo $this->requestAction(array('controller' => 'pages', 'action' => 'contact'), array('bare'));
+			 	* A u funkciji koja handluje gresku tj. ona koja je zaduzena za prikaz greske neophodne je:
+				* $this->autoLayout = true;
+				* Po Defaultu requestAction radi samo rendering elementa
+				* return $this->render('contact', 'default');
+ 				*/
+				$this->cakeError('error404');
+				exit(0);
+			}
+			
 			$activeMenuitem = $this->Menuitem->find('first', array(
 				'conditions' => array(
 					Menuitem::T_ContentId => $id,
 					Menuitem::T_ContentType => 'PAGE'
 				))
 			);
+			$page = $this->Page->find('first', array('conditions' => array('Page.id' => $id)));
+			
 			$this->set('title_for_layout', "Inkoplan :: {$activeMenuitem[PAGE][Page::Title]}");
 			$this->set('active_main_menuitem', $activeMenuitem['Menuitem']['id']);
-			$this->set('page', $this->Page->find('first', array('conditions' => array('Page.id' => $id))));
+			$this->set('page', $page);
 		}
 		
 		public function admin_form($id = null) {
@@ -200,6 +228,9 @@
 				$pageNameIsChanged =  $this->data[PAGE][Page::Title] != $pageData[PAGE][Page::Title];
 				$pageSlugIsChanged = $pageData[SLUG][Slug::Url] != 'pages/'.Slug::createSlugUrl($this->data[SLUG][Slug::Url]).'/%';
 				
+				$dataSource = $this->Page->getDataSource();
+				$dataSource->begin($this->Page);
+			
 				$this->Page->id = $id;
 				$success = $this->Page->save($this->data[PAGE]);
 
@@ -214,10 +245,19 @@
 						$success = $this->Menuitem->save(array(Menuitem::Title => $this->data[PAGE][Page::Title]));
 					}
 				}
+
+				if ($success) {
+					$dataSource->commit($this->Page);
+					$message = __('Page is successfully saved', true); 
+				} else {
+					$dataSource->rollback($this->Page);
+					$message = __('Page is not successfully saved', true);
+				}
 				
 				$returnData = array(
 					'success' => $success ? true : false,
-					'message' => $success ? 'Page successfully saved' : $this->Page->validationErrors
+					'message' => $message,
+					'errors' => am($this->Page->validationErrors, $this->Slug->validationErrors, $this->Menuitem->validationErrors)
 				);
 			}
 			$this->returnJsonData(am($returnData, $this->__getPageData($id)));

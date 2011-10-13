@@ -41,8 +41,8 @@
 			$mainMenuId = $this->Menuitem->getRootNodeId(Menuitem::TypeMain);
 			$menuitemsData = $this->Menuitem->getMenuChildren($mainMenuId);
 			$this->set('menuitemsData', $menuitemsData);
-			
-			if ($this->action == 'view') {
+
+			if (!in_array($this->action, array('home', 'contact'))) {
 				$sideMenuId = $this->Menuitem->getRootNodeId(Menuitem::TypeSide);
 				if (!empty($sideMenuId)) {
 					$finalSideMenuitems = $this->Menuitem->getMenuChildren($sideMenuId);
@@ -52,19 +52,18 @@
 			$xmlObj = simplexml_load_string(file_get_contents('files/company_data.xml')); // convert string of XML into an object
 			$arrXml = objectsIntoArray($xmlObj);
 			$this->set('company_data', $arrXml); 
-			
 		}
 		
 		public function redirect301($url) {
 			$this->redirect("/$url", 301);
 		}
 		
-		 public function returnJsonData($data) {
-		 	Configure::write('debug', 0);
+		public function returnJsonData($data) {
+			Configure::write('debug', 0);
 			if (RequestHandlerComponent::isAjax()) {
 				header('Content-Type: text/javascript; charset="utf-8"');
 			}
-		  	echo json_encode($data); 
-		  	exit(0);
-		 } 
+			echo json_encode($data); 
+			exit(0);
+		} 
 	}

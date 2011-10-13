@@ -5,23 +5,49 @@
 		<meta content="ADR, opasne materije, sertifikat, ispit, Procena rizika" name="keywords">
 		<meta content="Polaganje ispita i izdavanje ADR sertifikata. Cara Dušana 18000 Niš, tel: 063/774 10 40" name="description">
 		
-		<?if (isset($metaCanonicalSlug)):?>
+		<? if (isset($metaCanonicalSlug)):?>
 			<link rel="canonical" href=<?="http://www.inkoplan.rs/$metaCanonicalSlug"?> />
-		<?php endif;?>
+		<? endif;?>
 		<title><?= $title_for_layout ?></title>
 		<?= $this->Html->css('default', null, array('media' => 'screen')) ?>
 		<?= $this->Html->css('inkoplan', null, array('media' => 'screen')) ?>
-
         <script type="text/javascript" src="js/jquery-1.4.2.js"></script>
-		
-		<?//$scripts_for_layout;?>
 	</head>
 	
  	<body class="bodyLayout">
 		<?= $this->element('header') ?>
 		<div id="content">
-			<?//= $this->element('session_messages') ?>
-			<?= $content_for_layout ?>
+			<? if (!empty($sideMenuitems)) :?>
+				<div id="left" class="position_left" >
+					<div id="menu" class="menu">
+						<div class="content">
+						<ul>
+						<? foreach($sideMenuitems as $sideMenuitem) : ?>
+							<? $activeClass = isset($active_main_menuitem) && ($sideMenuitem['Menuitem']['id'] == $active_main_menuitem); ?>
+							<li class="<?=$sideMenuitem['Menuitem']['class'] . ($activeClass ? ' active' : '')?>">
+								<a href=<?="/inkoplan{$sideMenuitem['Menuitem']['slug_url']}"?>><span><?=$sideMenuitem['Menuitem'][Menuitem::Title]?></span></a>
+								<? if (isset($sideMenuitem[Menuitem::A_Children])) :?>
+									<ul>
+									<? foreach($sideMenuitem[Menuitem::A_Children] as $children):?>
+										<? $activeClass = isset($active_main_menuitem) && ($children['Menuitem']['id'] == $active_main_menuitem); ?>
+										<li class="<?=$children['Menuitem']['class'] . ($activeClass ? ' active' : '')?>">
+											<a href=<?="/inkoplan{$children['Menuitem']['slug_url']}"?>><span><?=$children['Menuitem'][Menuitem::Title]?></span></a>
+										</li>
+									<? endforeach;?>
+									</ul>	
+								<? endif; ?>
+							</li>
+						<? endforeach;?>
+						</ul>
+						</div>
+					</div>
+				</div>
+			<? endif;?>
+			
+			<div class='position_main'>
+				<?= $content_for_layout ?>
+			</div>
+			
 		</div>
 		<?=$this->element('footer', array('company_data' => $company_data)) ?>
 		<?=$this->element('sql_dump'); ?>

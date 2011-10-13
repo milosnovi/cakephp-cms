@@ -1,5 +1,7 @@
 <?php
 	class Slug extends AppModel {
+		var $name = 'Slug'; 
+		
 		const Id = 'Slug.id';
 		
 		const Url = 'url';
@@ -190,11 +192,3 @@
 		}
 	}
 ?>
-
-
-
-
-
-
-
-

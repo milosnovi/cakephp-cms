@@ -34,15 +34,19 @@ CP.loadOverrides = function() {
 					var success = options.json.success;
 					var msgBoxTitle = success ? "<?__('Info')?>" : "<?__('Error')?>";
 					if (success) {
-						Ext.MessageBox.progress(msgBoxTitle, 'page successfully saved');
+						Ext.MessageBox.progress(msgBoxTitle, options.json.message);
 						Ext.MessageBox.updateProgress(1);
 						setTimeout('Ext.MessageBox.hide()', 1000);
 					} else {
-						var message = '';
-						for (var i in options.json.message){
-							message += options.json.message[i];
+						var message = options.json.message;
+						
+						if (!Ext.isEmpty(options.json.errors)) {
+							for (var i in options.json.errors) {
+								message += "<br/>" + options.json.errors['title'];
+							}
 						}
 						Ext.MessageBox.show({
+							width: 300,
 							title: msgBoxTitle, 
 							msg: message, 
 							buttons: Ext.MessageBox.OK, 
@@ -56,34 +60,6 @@ CP.loadOverrides = function() {
 						//Ext.MessageBox.hide();
 					}
 				}
-				/*Common.showMessage(options.json, response);
-				showMessage: function(json, response) {
-					if (('undefined' != typeof(json.message)) && json.message) {
-						var msgBoxTitle = Common.getRequestParam(response, 'msgBoxTitle');
-						msgBoxTitle = msgBoxTitle ? msgBoxTitle : (json.success ? "<?__('Info')?>" : "<?__('Error')?>");
-
-						var param = json.success ? 'msgBoxSuccessText' : 'msgBoxFailureText';
-						var msgBoxText = Common.getRequestParam(response, param, '');
-						var infix = (msgBoxText && json.message) ? '<br/>' : '';
-
-						if (json.success) {
-							Ext.MessageBox.progress(msgBoxTitle, msgBoxText + infix + json.message);
-							Ext.MessageBox.updateProgress(1);
-							setTimeout('Ext.MessageBox.hide()', 1000);
-						} else {
-							Common.msgError(msgBoxTitle, msgBoxText + infix + json.message);
-						}
-					} else {
-						var quietAjaxRequest = (-1 != response.url.indexOf('/admin/site/status')) || (-1 != response.url.indexOf('/admin/filemanager/get_usage_list'));
-						if (response && response.url && !quietAjaxRequest) {
-							Ext.MessageBox.hide();
-						}
-					}
-				}*/
-//				Ext.MessageBox.hide();
-			} else {
-				options.json = null;
-				Common.showMessage({}, response);
 			}
 		} catch (err) {
 			Ext.MessageBox.hide();

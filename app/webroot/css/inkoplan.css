@@ -479,3 +479,8 @@ pre p {
 	text-align: center;
 	margin-top: 5px;
 }
+
+div .position_main {
+	float:left;
+	width: 700px;
+}

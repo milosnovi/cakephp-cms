@@ -59,9 +59,9 @@
 	</fieldset>
 </form>
 <div id="session_messages" style="text-align: left;">
-	<?php echo $session->flash(); ?>
+	<?=$session->flash(); ?>
 </div>
-<?php if(!empty($finalSearchArray)):?>
+<? if(!empty($finalSearchArray)):?>
 	<h2><?__('REZULTAT PRETRAGE:');?></h2>
 	<div class="result">
 		<?if (0 < count($finalSearchArray)) :?>
@@ -73,8 +73,8 @@
 						</li>
 					</ul>
 				<? endforeach;?>
-		<?else: ?>
+		<? else: ?>
 			<?__('Ni jedna stranica ne sadrži željenu frazu.')?>		
 		<? endif;?>
 	</div>
-<?php endif;?>
+<? endif;?>

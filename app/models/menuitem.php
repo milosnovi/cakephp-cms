@@ -118,5 +118,4 @@ class Menuitem extends AppModel {
 		}
 		return $finalMenuitemsArray;
 	}
-	
 }
